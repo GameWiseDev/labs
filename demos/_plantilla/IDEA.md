@@ -36,7 +36,14 @@ Lo que quedó afuera a propósito o para más adelante.
 ## Requerimientos
 
 **Esfuerzo estimado:** S / M / L / XL (estimación de la IA, a validar por el CTO)
+**Tiempo estimado:** ... semanas de un dev a tiempo completo
 **Primera versión posible:**
+
+### Plan por fases
+
+| Fase | Qué entrega | Esfuerzo | Tiempo | Depende de |
+| --- | --- | --- | --- | --- |
+| 1 |  |  |  |  |
 
 ### Datos
 

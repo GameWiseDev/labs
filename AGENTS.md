@@ -40,12 +40,12 @@ Hablá en español rioplatense (vos, tenés, querés), con palabras simples y si
 
 Al terminar, la carpeta `demos/<nombre>/` tiene:
 
-1. `index.html`: la demo funcionando.
-2. `IDEA.md`: la ficha completa, con el **resumen de requerimientos** (qué datos, librerías, modelos y servicios necesitaría la versión real, qué ya existe y qué no).
+1. `index.html`: la demo funcionando, con una sección final "Qué haría falta" que resume los requerimientos, el tiempo y las fases (la plantilla ya la trae).
+2. `IDEA.md`: la ficha completa, con el **resumen de requerimientos** (qué datos, librerías, modelos y servicios necesitaría la versión real, qué ya existe y qué no), el **esfuerzo**, el **tiempo estimado** y el **plan por fases**.
 
 Y además:
 
-3. Una entrada nueva en `demos.js` (estado `propuesta`).
+3. Una entrada nueva en `demos.js` (estado `propuesta`, con `necesita`, `esfuerzo` y `tiempo`).
 4. Una fila nueva en la tabla "Demos" del `README.md`.
 
 ## Control antes de decir "listo"
@@ -59,7 +59,8 @@ Revisá todo esto y arreglá lo que falle:
 - [ ] Se ve bien a 360 px de ancho (celular) y en pantalla grande, sin scroll horizontal.
 - [ ] Los botones miden al menos 44 px de alto y tienen foco visible.
 - [ ] Las animaciones se apagan con "reducir movimiento" (`prefers-reduced-motion`).
-- [ ] `IDEA.md` está completa, con requerimientos separados en "ya existe" y "hay que construir".
+- [ ] `IDEA.md` está completa, con requerimientos separados en "ya existe" y "hay que construir", esfuerzo, tiempo y plan por fases.
+- [ ] La sección "Qué haría falta" de la demo dice lo mismo que la ficha.
 - [ ] La entrada de `demos.js` y la fila del README están agregadas.
 - [ ] La persona vio la demo y confirmó que muestra lo que quería.
 

@@ -70,7 +70,24 @@ h2{font:700 21px/1.15 var(--fc);margin:4px 0 8px}
 .coach{background:var(--hi);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .coach p{margin:0 0 4px}
 
+/* Qué haría falta (obligatorio al final de cada demo) */
+.req{margin-top:40px;border-top:1px solid var(--line);padding-top:28px}
+.req .note2{display:inline-block;font-size:13px;font-weight:600;color:var(--ink2);background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+.ph{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ph h3{font:700 18px/1.2 var(--fc);margin:0 0 2px}.ph p{margin:0;font-size:14px;color:var(--ink2)}
+.tag{display:inline-block;font:700 12px var(--fc);padding:1px 7px;border-radius:5px;background:var(--hi);border:1px solid var(--line);margin-right:6px}
+.tl{position:relative;height:12px;background:var(--mute);border-radius:6px}
+.tl i{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:var(--acc)}
+.tl s{position:absolute;top:0;bottom:0;border-radius:0 6px 6px 0;background:rgba(18,190,242,.35);text-decoration:none}
+.tlv{font-size:13px;color:var(--ink2);margin-top:4px}
+.drow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.drow small{display:block;color:var(--ink3);font-size:13px}
+.ok,.no,.half{font-size:13px;font-weight:700;white-space:nowrap}
+.ok{color:var(--green)}.no{color:var(--red)}.half{color:var(--ink2)}
+.rlist{margin:8px 0 0;padding-left:18px;font-size:15px;color:var(--ink2)}.rlist b{color:var(--ink)}
+
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
+@media(max-width:700px){.ph{grid-template-columns:1fr;gap:8px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -123,6 +140,37 @@ h2{font:700 21px/1.15 var(--fc);margin:4px 0 8px}
       </div>
     </aside>
   </div>
+
+  <!-- Obligatorio: resumen de requerimientos (lo mismo que en IDEA.md). Ver docs/requerimientos.md -->
+  <section class="req" aria-labelledby="req-t">
+    <span class="note2">Estimación de la IA · a validar por el CTO</span>
+    <h1 id="req-t" style="font-size:clamp(24px,2.6vw,32px)">Hacerlo real lleva X a Y semanas de un dev</h1>
+    <p class="lede">Lo que necesitaría esta idea para funcionar con datos reales. Semanas de un desarrollador a tiempo completo; con el equipo part time, se estiran.</p>
+    <div class="card">
+      <p class="lbl">Plan por fases</p>
+      <!-- Una fila por fase. Barra: ancho lleno = mínimo, parte clara = hasta el máximo (escala de 12 semanas). -->
+      <div class="ph"><div><h3><span class="tag">M</span>Fase 1 · Qué entrega</h3><p>De qué depende. Idealmente, solo datos que ya tenemos.</p></div><div><div class="tl"><i style="width:16.7%"></i><s style="left:16.7%;width:8.3%"></s></div><p class="tlv">2 a 3 semanas</p></div></div>
+    </div>
+    <div class="grid" style="margin-top:16px">
+      <div class="card">
+        <p class="lbl">Datos que necesita</p>
+        <div class="drow"><span>Dato<small>Para qué · fuente</small></span><span class="ok">✓ Lo tenemos</span></div>
+        <div class="drow"><span>Dato<small>Para qué · fuente</small></span><span class="half">≈ En parte</span></div>
+        <div class="drow"><span>Dato<small>Para qué · fuente</small></span><span class="no">✕ Falta</span></div>
+      </div>
+      <div class="card">
+        <p class="lbl">Para la versión real</p>
+        <ul class="rlist">
+          <li><b>Backend:</b> ...</li>
+          <li><b>IA:</b> ...</li>
+          <li><b>Frontend:</b> ...</li>
+          <li><b>Esta demo:</b> librerías que usa, o "ninguna".</li>
+        </ul>
+        <p class="lbl" style="margin-top:14px">Riesgos y dudas</p>
+        <ul class="rlist"><li>...</li></ul>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>

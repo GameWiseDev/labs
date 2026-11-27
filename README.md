@@ -38,7 +38,7 @@ La guía paso a paso está en **[EMPEZAR.md](EMPEZAR.md)**.
 - **Datos de ejemplo, y que se note.** Toda demo muestra la marca "Ejemplo · datos simulados". Nada de testimonios ni números presentados como reales.
 - **Autocontenida.** Se abre con doble clic.
 - **Con la marca de GAMEWISE** (manual v1.1, resumido en `docs/marca.md`).
-- **Con ficha y requerimientos.** Cada demo tiene su `IDEA.md`: el problema, el momento clave, qué datos, librerías, modelos y servicios necesitaría la versión real, el esfuerzo estimado y la decisión del equipo.
+- **Con ficha y requerimientos.** Cada demo tiene su `IDEA.md`: el problema, el momento clave, qué datos, librerías, modelos y servicios necesitaría la versión real, el esfuerzo y el tiempo estimados, y la decisión del equipo. La demo misma muestra ese resumen en una sección "Qué haría falta".
 - **El repo es público.** Nada de montos de la ronda, precios internos ni datos personales.
 
 ## Publicación
@@ -61,6 +61,6 @@ Cuando cambia el estado, se actualiza en `demos.js` y en la sección "Decisión 
 
 ## Demos
 
-| Demo | Estado | Esfuerzo | Ficha |
-| --- | --- | --- | --- |
-| Coach IA: ronda clave y simulación de decisiones | propuesta | XL | [IDEA.md](demos/coach-ia-simulacion/IDEA.md) |
+| Demo | Estado | Esfuerzo | Tiempo estimado | Ficha |
+| --- | --- | --- | --- | --- |
+| Coach IA: ronda clave y simulación de decisiones | propuesta | XL | 4 a 7 meses (4 fases) | [IDEA.md](demos/coach-ia-simulacion/IDEA.md) |

@@ -41,7 +41,14 @@ Una escala simple, marcada como estimación de la IA a validar por el CTO:
 
 Si la idea se puede hacer por partes, proponé una **primera versión chica** que entregue valor con lo que ya existe.
 
-### 5. Riesgos y dudas
+### 5. Tiempo estimado y plan por fases
+
+- **Tiempo total**, en semanas de un dev a tiempo completo, siempre como rango ("6 a 9 semanas"). Aclará que con el equipo part time se estira.
+- **Plan por fases**, si la idea tiene más de una parte: qué entrega cada fase, su talla, su tiempo y de qué depende. Ordená las fases para que la primera use datos que ya tenemos.
+
+Referencia de tiempos por talla: S, menos de 1 semana; M, 1 a 3 semanas; L, 4 a 8 semanas; XL, más de 8 semanas.
+
+### 6. Riesgos y dudas
 
 Lo que puede salir mal o falta saber: dependencia de terceros, costo por usuario, precisión del modelo, cuestiones legales o de marca.
 
@@ -51,7 +58,12 @@ Lo que puede salir mal o falta saber: dependencia de terceros, costo por usuario
 ## Requerimientos
 
 **Esfuerzo estimado:** M (estimación de la IA, a validar por el CTO)
+**Tiempo estimado:** 2 a 3 semanas de un dev a tiempo completo
 **Primera versión posible:** ...
+
+### Plan por fases
+| Fase | Qué entrega | Esfuerzo | Tiempo | Depende de |
+| --- | --- | --- | --- | --- |
 
 ### Datos
 | Dato | Para qué | Fuente | ¿Lo tenemos? |
@@ -70,4 +82,10 @@ Lo que puede salir mal o falta saber: dependencia de terceros, costo por usuario
 - ...
 ```
 
-Además, en `demos.js` va un resumen corto en el campo `necesita` (2 a 4 elementos), que se muestra en el catálogo.
+## Dónde va el resumen
+
+1. **En la ficha** (`IDEA.md`), completo, con el formato de arriba.
+2. **En la demo**, en una sección "Qué haría falta" (la plantilla ya la trae, al final de la página): el tiempo total, las fases con su tiempo, los datos con "Lo tenemos", "En parte" o "Falta", y los riesgos. Así se ve cuando se presenta la demo, sin abrir la ficha.
+3. **En `demos.js`**, resumido: `necesita` (2 a 4 elementos), `esfuerzo` y `tiempo`. Se muestran en el catálogo.
+
+Los tres dicen lo mismo: si cambiás uno, actualizá los otros.

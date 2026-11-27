@@ -37,8 +37,20 @@ La ronda se pausa en el segundo del error y pregunta "¿Qué hacés?". Al elegir
 
 ## Requerimientos
 
-**Esfuerzo estimado:** XL en total (estimación de la IA, a validar por el CTO). Por partes va de S a XL.
-**Primera versión posible:** detector de tilt y relato con voz, que se pueden hacer con los datos que ya tenemos (S a M). Después, momentos decisivos con un modelo simple de probabilidad (L). La simulación de decisiones en el mapa queda para el final (XL).
+**Esfuerzo estimado:** XL en total (estimación de la IA, a validar por el CTO).
+**Tiempo estimado:** de 18 a 29 semanas de un dev a tiempo completo, unos 4 a 7 meses. Con el equipo part time, más.
+**Primera versión posible:** la fase 1 (detector de tilt y briefing con voz), en 2 a 3 semanas y con los datos que ya tenemos.
+
+### Plan por fases
+
+| Fase | Qué entrega | Esfuerzo | Tiempo | Depende de |
+| --- | --- | --- | --- | --- |
+| 1 | Detector de tilt y briefing previo con voz | M | 2 a 3 semanas | Nada nuevo: Leetify, FACEIT y el LLM actual |
+| 2 | Procesar las demos `.dem` de cada partida (posiciones y eventos) | L | 4 a 6 semanas | Descarga directa desde Steam |
+| 3 | Momentos decisivos: modelo de probabilidad de ganar la ronda y gráfico de impacto | L | 4 a 8 semanas | Fase 2 y un dataset de rondas |
+| 4 | Ronda clave: reproductor 2D, decisión, alternativas y relato sincronizado | XL | 8 a 12 semanas | Fases 2 y 3 |
+
+Cada fase se puede lanzar por separado. El mismo resumen está en la demo, en la sección "Qué haría falta".
 
 ### Datos
 

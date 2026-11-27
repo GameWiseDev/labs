@@ -3,6 +3,7 @@
 // Estados: propuesta · evaluacion · aprobada · roadmap · descartada
 // necesita: resumen corto de los requerimientos (2 a 4 elementos), ver docs/requerimientos.md
 // esfuerzo: S · M · L · XL (estimación a validar por el CTO)
+// tiempo: estimación total en lenguaje simple, por ejemplo '2 a 3 semanas'
 
 window.DEMOS = [
   {
@@ -12,6 +13,7 @@ window.DEMOS = [
     incluye: ['Simulación de decisiones', 'Momentos decisivos', 'Briefing previo con voz', 'Detector de tilt'],
     necesita: ['Procesar demos .dem (posiciones y eventos)', 'Modelo de probabilidad de ganar la ronda', 'Reproductor 2D en la app'],
     esfuerzo: 'XL',
+    tiempo: '4 a 7 meses (4 fases; la primera, 2 a 3 semanas)',
     estado: 'propuesta',
     autor: 'Jere',
     fecha: '2026-11-27'

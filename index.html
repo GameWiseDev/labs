@@ -47,6 +47,7 @@ h1{font:700 clamp(30px,4vw,46px)/1.05 var(--fc);margin:0 0 10px;text-wrap:balanc
 .need p{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin:0 0 6px}
 .need ul{margin:0;padding-left:18px;font-size:14px;color:var(--ink2)}
 .need b{color:var(--ink);font-family:var(--fc)}
+.need .time{margin:8px 0 0;text-transform:none;letter-spacing:0;font-size:14px;font-weight:500;color:var(--ink2)}
 .howto{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 30px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
 .howto h2{font:700 21px/1.15 var(--fc);margin:0 0 4px}.howto p{margin:0;color:var(--ink2);font-size:15px}
 .howto code{background:var(--hi);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:14px;color:var(--ink)}
@@ -68,7 +69,7 @@ footer{color:var(--ink3);font-size:13px;margin-top:40px}
   </div>
   <div class="filters" id="filters" role="group" aria-label="Filtrar por estado"></div>
   <div class="grid" id="grid"></div>
-  <footer>El esfuerzo es una estimación inicial a validar por el CTO. Las demos usan datos de ejemplo.</footer>
+  <footer>El esfuerzo y el tiempo son estimaciones iniciales a validar por el CTO. Las demos usan datos de ejemplo.</footer>
 </main>
 <script src="demos.js"></script>
 <script>
@@ -92,7 +93,7 @@ footer{color:var(--ink3);font-size:13px;margin-top:40px}
         <h2>${esc(d.nombre)}</h2>
         <p>${esc(d.resumen)}</p>
         ${d.incluye ? `<div class="tags">${d.incluye.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
-        ${d.necesita ? `<div class="need"><p>Necesita${d.esfuerzo ? ` · esfuerzo <b>${esc(d.esfuerzo)}</b>` : ''}</p><ul>${d.necesita.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
+        ${d.necesita ? `<div class="need"><p>Necesita${d.esfuerzo ? ` · esfuerzo <b>${esc(d.esfuerzo)}</b>` : ''}</p><ul>${d.necesita.map(t => `<li>${esc(t)}</li>`).join('')}</ul>${d.tiempo ? `<p class="time">Tiempo estimado: <b>${esc(d.tiempo)}</b></p>` : ''}</div>` : ''}
         <div class="acts"><a class="btn" href="demos/${encodeURIComponent(d.slug)}/index.html">Abrir demo</a><a class="btn ghost" href="https://github.com/GameWiseDev/labs/blob/main/demos/${encodeURIComponent(d.slug)}/IDEA.md">Ficha</a></div>
       </article>`).join('') : '<p class="empty">No hay demos en este estado.</p>';
   }

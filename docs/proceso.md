@@ -78,9 +78,9 @@ Corregí hasta que diga que la demo muestra lo que quería. Después pasá el co
 
 ## Paso 6 · Ficha y requerimientos
 
-Completá `demos/<nombre>/IDEA.md` con lo hablado y el resumen de requerimientos, siguiendo [requerimientos.md](requerimientos.md). Mostrale a la persona la parte de requerimientos y explicala en dos o tres líneas: qué ya tenemos, qué habría que construir y qué es lo más difícil.
+Completá `demos/<nombre>/IDEA.md` con lo hablado y el resumen de requerimientos, siguiendo [requerimientos.md](requerimientos.md): datos, librerías, versión real, esfuerzo, tiempo y plan por fases. Pasá el mismo resumen a la sección "Qué haría falta" de la demo. Mostrale a la persona esa parte y explicala en dos o tres líneas: qué ya tenemos, qué habría que construir, cuánto llevaría y qué es lo más difícil.
 
-Sumá la demo a `demos.js` (estado `propuesta`) y a la tabla del `README.md`.
+Sumá la demo a `demos.js` (estado `propuesta`, con `necesita`, `esfuerzo` y `tiempo`) y a la tabla del `README.md`.
 
 ## Paso 7 · Compartir
 

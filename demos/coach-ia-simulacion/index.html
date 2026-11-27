@@ -45,11 +45,11 @@ h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:
 .btn{background:var(--acc);color:#0F1219;font-weight:700;border:0;border-radius:10px;padding:10px 16px;min-height:44px}
 .btn:hover{background:#3fcdf6}.btn:active{background:var(--accp)}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{background:var(--hi)}
-.chip{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:14px;font-weight:600;color:var(--ink2)}
+.chip{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;font-size:14px;font-weight:600;color:var(--ink2)}
 .chip.on,.chip:hover{color:var(--ink);border-color:var(--acc)}
 .chip:disabled{opacity:.5;cursor:default}
 .seg{display:inline-flex;background:var(--hi);border-radius:11px;padding:3px;flex-wrap:wrap}
-.seg button{background:none;border:0;color:var(--ink2);padding:8px 13px;border-radius:9px;min-height:40px;font-weight:600;font-size:14px}
+.seg button{background:none;border:0;color:var(--ink2);padding:8px 13px;border-radius:9px;min-height:44px;font-weight:600;font-size:14px}
 .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
 .rgrid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start}
 .stackcol{display:grid;gap:16px}
@@ -99,7 +99,7 @@ h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:
 .narr li{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:8px;border-radius:8px;color:var(--ink3);cursor:pointer;font-size:15px;line-height:1.4}
 .narr li time{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;padding-top:1px}
 .narr li.past{color:var(--ink2)}.narr li.now{background:var(--hi);color:var(--ink)}.narr li.now time{color:var(--acc)}
-.vbtn{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:38px;font-size:13px;font-weight:700;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
+.vbtn{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:44px;font-size:13px;font-weight:700;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
 .vbtn[aria-pressed=true]{color:var(--acc);border-color:var(--acc)}
 .vbtn svg{width:15px;height:15px}
 .msgs{display:flex;flex-direction:column;gap:10px;margin-top:10px;max-height:380px;overflow:auto}
@@ -150,6 +150,23 @@ h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:
 .breath{width:70px;height:70px;border-radius:50%;border:2px solid var(--acc);margin:6px 0;opacity:.8}
 .running .breath{animation:br 8s ease-in-out infinite}
 @keyframes br{0%,100%{transform:scale(.7)}45%{transform:scale(1.05)}}
+/* Qué haría falta */
+.phases{display:grid;gap:12px;margin-top:12px}
+.ph{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ph h3{margin:0 0 2px}.ph p{margin:0;font-size:14px;color:var(--ink2)}
+.ph .tag{display:inline-block;font:700 12px var(--fc,Barlow);padding:1px 7px;border-radius:5px;background:var(--hi);border:1px solid var(--line);color:var(--ink);margin-right:6px}
+.tl2{position:relative;height:12px;background:var(--mute);border-radius:6px}
+.tl2 i{position:absolute;top:0;bottom:0;left:0;border-radius:6px;background:var(--acc)}
+.tl2 s{position:absolute;top:0;bottom:0;border-radius:0 6px 6px 0;background:rgba(18,190,242,.35);text-decoration:none}
+.tlv{display:flex;justify-content:space-between;font-size:13px;color:var(--ink3);margin-top:4px;font-variant-numeric:tabular-nums}
+.tlv b{color:var(--ink);font-weight:700}
+.dlist{display:grid;gap:0;margin-top:8px}
+.drow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.drow small{display:block;color:var(--ink3);font-size:13px}
+.ok,.no,.half{font-size:13px;font-weight:700;white-space:nowrap}
+.ok{color:var(--green)}.no{color:var(--red)}.half{color:var(--ink2)}
+.rlist{margin:8px 0 0;padding-left:18px;font-size:15px;color:var(--ink2)}.rlist li{margin:4px 0}.rlist b{color:var(--ink)}
+@media(max-width:700px){.ph{grid-template-columns:1fr;gap:8px}}
 @media(prefers-reduced-motion:reduce){.running .breath,.typing::after{animation:none}.bar i{transition:none}}
 @media(max-width:1080px){.rgrid,.bgrid,.tgrid{grid-template-columns:1fr}}
 @media(max-width:900px){.app{grid-template-columns:1fr}.side{height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:14px;z-index:5;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}nav{flex-direction:row}nav a.on{box-shadow:inset 0 -3px 0 var(--acc)}.foot,.brand small{display:none}.brand{padding:0 4px;font-size:20px}}
@@ -166,6 +183,7 @@ h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:
       <a href="#momentos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M7 12V6M11 12v4M15 12V8M19 12v7"/></svg>Momentos decisivos</a>
       <a href="#briefing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M9 12l2 2 4-4"/></svg>Briefing previo</a>
       <a href="#tilt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Detector de tilt</a>
+      <a href="#requisitos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Qué haría falta</a>
     </nav>
     <p class="foot"><a href="../../index.html" style="color:var(--acc);font-weight:700;text-decoration:none">← Volver a Labs</a><br>Demo conceptual de funciones de IA. Todas las partidas, jugadores y porcentajes son de ejemplo.</p>
   </aside>
@@ -326,6 +344,60 @@ h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:
             </ol>
             <div class="row"><button class="btn" id="pStart">Empezar pausa</button><button class="btn ghost" id="pSkip">Adelantar (demo)</button></div>
             <p class="small" id="pMsg" style="margin:10px 0 0;color:var(--ink2)"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- QUÉ HARÍA FALTA -->
+    <section id="v-requisitos" hidden>
+      <span class="note" style="color:var(--ink2);background:var(--hi);border-color:var(--line)">Estimación de la IA · a validar por el CTO</span>
+      <h1>Hacerlo real lleva de 4 a 7 meses de un dev, en cuatro fases que entregan valor por separado</h1>
+      <p class="lede">Lo que necesitaría cada parte de esta demo para funcionar con partidas reales. Los tiempos son semanas de un desarrollador a tiempo completo; con el equipo part time, se estiran.</p>
+      <div class="kpis">
+        <div class="card kpi"><div class="v">18–29</div><p>semanas de trabajo en total, sumando las cuatro fases</p></div>
+        <div class="card kpi"><div class="v">2–3 sem</div><p>para la primera fase, con los datos que ya tenemos</p></div>
+        <div class="card kpi"><div class="v">XL</div><p>esfuerzo total: necesita datos nuevos y un modelo propio</p></div>
+      </div>
+      <div class="card">
+        <p class="lbl">Plan por fases</p>
+        <div class="phases">
+          <div class="ph"><div><h3><span class="tag">M</span>Fase 1 · Detector de tilt y briefing con voz</h3><p>Usa las estadísticas de Leetify y FACEIT y el LLM que ya tenemos. No necesita datos nuevos.</p></div><div><div class="tl2"><i style="width:16.7%"></i><s style="left:16.7%;width:8.3%"></s></div><div class="tlv"><b>2 a 3 semanas</b><span>de 12</span></div></div></div>
+          <div class="ph"><div><h3><span class="tag">L</span>Fase 2 · Procesar las demos de cada partida</h3><p>Bajar las demos <code>.dem</code>, sacar posiciones y eventos de cada ronda y guardarlos. Depende de la descarga directa desde Steam.</p></div><div><div class="tl2"><i style="width:33.3%"></i><s style="left:33.3%;width:16.7%"></s></div><div class="tlv"><b>4 a 6 semanas</b><span>de 12</span></div></div></div>
+          <div class="ph"><div><h3><span class="tag">L</span>Fase 3 · Momentos decisivos</h3><p>Modelo propio de probabilidad de ganar la ronda, entrenado con miles de rondas, y el gráfico de impacto por ronda.</p></div><div><div class="tl2"><i style="width:33.3%"></i><s style="left:33.3%;width:33.3%"></s></div><div class="tlv"><b>4 a 8 semanas</b><span>de 12</span></div></div></div>
+          <div class="ph"><div><h3><span class="tag">XL</span>Fase 4 · Ronda clave con simulación</h3><p>Reproductor 2D en la app, detección del momento del error, opciones de decisión y su resultado comparando con rondas parecidas, y relato sincronizado.</p></div><div><div class="tl2"><i style="width:66.7%"></i><s style="left:66.7%;width:33.3%"></s></div><div class="tlv"><b>8 a 12 semanas</b><span>de 12</span></div></div></div>
+        </div>
+        <p class="small mut" style="margin:10px 0 0">Barra llena: mínimo estimado. Parte clara: hasta el máximo.</p>
+      </div>
+      <div class="bgrid" style="margin-top:16px">
+        <div class="card">
+          <p class="lbl">Datos que necesita</p>
+          <div class="dlist">
+            <div class="drow"><span>Estadísticas por partida<small>Detector de tilt y briefing · Leetify y FACEIT</small></span><span class="ok">✓ Lo tenemos</span></div>
+            <div class="drow"><span>Historial de sesiones del jugador<small>Comparar la sesión de hoy con las anteriores · base de GAMEWISE</small></span><span class="half">≈ En parte</span></div>
+            <div class="drow"><span>Posiciones de cada jugador momento a momento<small>Dibujar la ronda en el mapa · demos .dem</small></span><span class="no">✕ Falta</span></div>
+            <div class="drow"><span>Eventos de cada ronda<small>Momento del error, relato y curva de probabilidad · demos .dem</small></span><span class="no">✕ Falta</span></div>
+            <div class="drow"><span>Miles de rondas de referencia<small>Entrenar el modelo de probabilidad · demos públicas o propias</small></span><span class="no">✕ Falta</span></div>
+          </div>
+        </div>
+        <div class="stackcol">
+          <div class="card">
+            <p class="lbl">Para la versión real</p>
+            <ul class="rlist">
+              <li><b>Backend:</b> descarga y procesamiento de demos, almacenamiento de posiciones y eventos, detección de momentos clave.</li>
+              <li><b>IA:</b> modelo propio de probabilidad de ganar la ronda. El LLM actual alcanza para el relato y para proponer opciones.</li>
+              <li><b>Frontend:</b> reproductor 2D con línea de tiempo, pantalla de decisión, gráfico de impacto por ronda.</li>
+              <li><b>Servicios:</b> almacenamiento para las demos procesadas. Voz del navegador o un servicio de voz más natural.</li>
+              <li><b>Esta demo:</b> sin librerías; mapa y gráficos en SVG, voz con la API del navegador.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <p class="lbl">Riesgos y dudas</p>
+            <ul class="rlist">
+              <li>Si una simulación da un resultado absurdo, el jugador deja de confiar en el coach.</li>
+              <li>¿Podemos bajar las demos de cada jugador de forma automática?</li>
+              <li>Costo de procesar demos completas frente a estadísticas agregadas.</li>
+              <li>Mapas: hay que dibujar esquemas propios, no los radares de Valve.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -608,7 +680,7 @@ $('#dec').addEventListener('click',e=>{
 
 /* ---------- RESULTADO ---------- */
 function showToast(){
-  const sc=S.sc,B=build(sc,S.br),opt=sc.options.find(o=>o.k===S.br),tx={l:['l','✕ Ronda perdida'],w:['w','✓ Ronda ganada'],o:['o','◐ Ronda abierta']}[B.result];
+  const sc=S.sc,B=build(sc,S.br),opt=sc.options.find(o=>o.k===S.br),tx={l:['l','✕ Ronda perdida'],w:['w','✓ Ronda ganada'],o:['o','≈ Ronda abierta']}[B.result];
   $('#toast').innerHTML=`<b class="${tx[0]}">${tx[1]}</b><span class="mut">${S.br==='A'?'Así terminó en tu partida.':'Gana '+opt.mc+' de cada 100 simulaciones.'}</span>${S.br==='A'?`<button data-go="${sc.best}">Simular la mejor decisión</button>`:''}`;
   $('#toast').hidden=false;
 }
@@ -713,7 +785,7 @@ $('#pStart').addEventListener('click',()=>{if(tmr)return;if(rem===0)rem=600;$('#
 $('#pSkip').addEventListener('click',()=>{if(rem>300&&tmr){rem=300}else{rem=0}if(!tmr&&rem!==0){$('#pStart').click()}paintTimer()});
 
 /* ---------- RUTEO ---------- */
-const VIEWS=['ronda','momentos','briefing','tilt'];
+const VIEWS=['ronda','momentos','briefing','tilt','requisitos'];
 function route(){
   let h=location.hash.slice(1);if(!VIEWS.includes(h))h='ronda';
   VIEWS.forEach(v=>$('#v-'+v).hidden=v!==h);

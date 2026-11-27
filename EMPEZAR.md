@@ -61,6 +61,6 @@ La demo se presenta en la reunión semanal y ahí se decide si avanza.
 - Los colores, las tipografías y el estilo de GAMEWISE.
 - Qué hace la app hoy y qué datos tenemos.
 - Que la demo va en HTML, CSS y JavaScript, con datos de ejemplo.
-- Cómo escribir el resumen de requerimientos: qué datos, librerías, modelos y servicios necesitaría la versión real.
+- Cómo escribir el resumen de requerimientos: qué datos, librerías, modelos y servicios necesitaría la versión real, cuánto llevaría y en qué fases. Lo deja en la ficha y en una sección "Qué haría falta" al final de la demo.
 
 Y recordá: el repo es público. No pongas montos de la ronda, precios internos ni datos personales.
