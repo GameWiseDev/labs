@@ -2,13 +2,15 @@
 
 Demos de ideas para GAMEWISE, hechas para mostrarlas al equipo y decidir si se pueden llevar a cabo.
 
+**En línea:** https://gamewise-labs.vercel.app
+
 Labs no depende del roadmap: acá entra cualquier idea que valga la pena ver funcionando. Las que el equipo elige pasan al roadmap más adelante, o se adelantan a otros desarrollos si hace falta.
 
 ## Cómo se ve
 
 Abrí `index.html` en el navegador: lista todas las demos con su estado. Cada demo vive en su carpeta dentro de `demos/` y se abre sola, sin servidor ni instalación.
 
-Si el repo se conecta a Vercel, cada push a `main` publica el catálogo y las demos (es un sitio estático, no necesita configuración).
+El repo está conectado a Vercel (proyecto `gamewise-labs`): cada push a `main` publica el catálogo y las demos en https://gamewise-labs.vercel.app. Las ramas y los pull requests generan una vista previa, que pide iniciar sesión en Vercel.
 
 ## Reglas de una demo
 
