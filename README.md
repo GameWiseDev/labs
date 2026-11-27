@@ -6,26 +6,46 @@ Demos de ideas para GAMEWISE, hechas para mostrarlas al equipo y decidir si se p
 
 Labs no depende del roadmap: acá entra cualquier idea que valga la pena ver funcionando. Las que el equipo elige pasan al roadmap más adelante, o se adelantan a otros desarrollos si hace falta.
 
-## Cómo se ve
+## Hacer una demo con IA
 
-Abrí `index.html` en el navegador: lista todas las demos con su estado. Cada demo vive en su carpeta dentro de `demos/` y se abre sola, sin servidor ni instalación.
+No hace falta saber programar. Bajá el repo, abrilo con tu herramienta de IA (Claude, Cursor, Antigravity, OpenCode, Copilot o un chat web) y escribí:
 
-El repo está conectado a Vercel (proyecto `gamewise-labs`): cada push a `main` publica el catálogo y las demos en https://gamewise-labs.vercel.app. Las ramas y los pull requests generan una vista previa, que pide iniciar sesión en Vercel.
+> Quiero hacer una demo nueva para GAMEWISE Labs. Guiame con preguntas.
+
+La IA lee las instrucciones del repo, te hace preguntas para entender la idea, te muestra una ficha para que la confirmes, arma la demo con la marca de GAMEWISE y deja escrito qué haría falta para hacerla real.
+
+La guía paso a paso está en **[EMPEZAR.md](EMPEZAR.md)**.
+
+## Qué hay en el repo
+
+| Archivo o carpeta | Para qué |
+| --- | --- |
+| `index.html` | Catálogo de demos, con estado y requerimientos de cada una |
+| `demos.js` | Lista de demos que lee el catálogo |
+| `demos/<nombre>/` | Cada demo: `index.html` y su ficha `IDEA.md` |
+| `demos/_plantilla/` | Punto de partida de toda demo nueva |
+| `EMPEZAR.md` | Guía para el equipo: cómo hacer una demo con IA |
+| `AGENTS.md` | Instrucciones para la IA (lo leen todas las herramientas) |
+| `docs/proceso.md` | Cómo la IA guía a la persona, de la idea a la demo publicada |
+| `docs/marca.md` | Colores, tipografías, componentes y librerías permitidas |
+| `docs/dominio.md` | Qué hace GAMEWISE, qué datos tenemos y vocabulario de CS2 |
+| `docs/requerimientos.md` | Cómo escribir el resumen de requerimientos de cada ficha |
+| `CLAUDE.md`, `GEMINI.md`, `.cursor/`, `.github/`, `.claude/`, `.opencode/` | Enlaces a `AGENTS.md` para cada herramienta y el comando `/nueva-demo` |
 
 ## Reglas de una demo
 
-- **Solo HTML, CSS y JS.** Se pueden usar librerías por CDN (cdnjs, jsDelivr, unpkg). Nada de build, backend ni claves de API.
+- **Solo HTML, CSS y JS**, en un único archivo. Librerías por CDN con versión exacta. Nada de build, backend ni claves de API.
 - **Datos de ejemplo, y que se note.** Toda demo muestra la marca "Ejemplo · datos simulados". Nada de testimonios ni números presentados como reales.
-- **Autocontenida.** Todo lo que la demo necesita está en su carpeta. Se puede abrir con doble clic.
-- **Con la marca de GAMEWISE.** Colores y tipografías del manual v1.1 (la plantilla ya los trae): carbón `#0F1219`, cian `#12BEF2` para acciones, azul `#2F8BFF` solo para datos, Barlow y Barlow Semi Condensed.
-- **Con ficha.** Cada demo tiene su `IDEA.md`: qué problema resuelve, qué haría falta para hacerla real y qué decidió el equipo.
+- **Autocontenida.** Se abre con doble clic.
+- **Con la marca de GAMEWISE** (manual v1.1, resumido en `docs/marca.md`).
+- **Con ficha y requerimientos.** Cada demo tiene su `IDEA.md`: el problema, el momento clave, qué datos, librerías, modelos y servicios necesitaría la versión real, el esfuerzo estimado y la decisión del equipo.
+- **El repo es público.** Nada de montos de la ronda, precios internos ni datos personales.
 
-## Sumar una demo
+## Publicación
 
-1. Copiá `demos/_plantilla` con un nombre corto en minúsculas y guiones, por ejemplo `demos/replay-3d`.
-2. Armá la demo en `index.html` y completá `IDEA.md`.
-3. Sumala al catálogo en `demos.js`, con estado `propuesta`.
-4. Subila en una rama y abrí un pull request; se presenta en la reunión semanal.
+El repo está conectado a Vercel (proyecto `gamewise-labs`): cada push a `main` publica el catálogo y las demos en https://gamewise-labs.vercel.app. Las ramas y los pull requests generan una vista previa, que pide iniciar sesión en Vercel.
+
+Las demos nuevas llegan por pull request desde una rama `demo/<nombre>`. Las aprueba un dev y se presentan en la reunión semanal.
 
 ## Estados
 
@@ -41,6 +61,6 @@ Cuando cambia el estado, se actualiza en `demos.js` y en la sección "Decisión 
 
 ## Demos
 
-| Demo | Estado | Ficha |
-| --- | --- | --- |
-| Coach IA: ronda clave y simulación de decisiones | propuesta | [IDEA.md](demos/coach-ia-simulacion/IDEA.md) |
+| Demo | Estado | Esfuerzo | Ficha |
+| --- | --- | --- | --- |
+| Coach IA: ronda clave y simulación de decisiones | propuesta | XL | [IDEA.md](demos/coach-ia-simulacion/IDEA.md) |

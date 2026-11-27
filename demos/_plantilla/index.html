@@ -8,14 +8,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* Tokens del manual de marca GAMEWISE v1.1 */
+/* =========================================================
+   PLANTILLA DE DEMO · GAMEWISE LABS
+   Tokens del manual de marca GAMEWISE v1.1 (ver docs/marca.md).
+   Usá siempre estas variables; no escribas colores sueltos.
+   ========================================================= */
 :root{
   color-scheme:dark;
   --bg:#0F1219;--side:#141821;--card:#191D27;--hi:#20252F;--tip:#2A3142;--line:#262C38;--mute:#313847;
   --ink:#F1F3F7;--ink2:#A3ABBA;--ink3:#858EA0;
   --acc:#12BEF2;     /* cian: marca y acciones (botones, foco, meta, progreso) */
   --accp:#0A8EC0;    /* cian presionado */
-  --blue:#2F8BFF;    /* azul: SOLO datos (lado CT, series de gráficos, etiqueta Dato) */
+  --blue:#2F8BFF;    /* azul: SOLO datos (lado CT, series de gráficos, etiqueta Dato). Nunca en botones */
+  --t:#D9774A;       /* lado T en mapas */
   --green:#6FD36B;   /* mejora, victoria */
   --red:#E5574F;     /* derrota, empeora */
   --purple:#B48CF2;  /* empate */
@@ -28,48 +33,113 @@
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--fb);overflow-x:clip}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* Cabecera */
 .top{display:flex;align-items:center;gap:16px;padding:14px max(4vw,16px);border-bottom:1px solid var(--line);background:var(--side)}
-.brand{font:700 20px/1 var(--fc);letter-spacing:.05em}.brand b{color:var(--acc)}
-.back{color:var(--ink2);text-decoration:none;font-weight:600;font-size:14px}.back:hover{color:var(--acc)}
+.brand{font:700 20px/1 var(--fc);letter-spacing:.05em}.brand b{color:var(--acc);font-weight:700}
+.brand span{color:var(--ink2);font-weight:600;margin-left:4px}
+.back{color:var(--ink2);text-decoration:none;font-weight:600;font-size:14px;min-height:44px;display:inline-flex;align-items:center}.back:hover{color:var(--acc)}
+
+/* Página */
 main{padding:28px max(4vw,16px) 56px;max-width:1240px;margin:0 auto}
 .note{display:inline-flex;gap:8px;align-items:center;color:var(--warn);background:rgba(242,169,59,.09);border:1px solid rgba(242,169,59,.35);padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600}
-h1{font:700 clamp(28px,3.4vw,40px)/1.08 var(--fc);margin:12px 0 8px;text-wrap:balance}
+.note svg{width:14px;height:14px}
+h1{font:700 clamp(28px,3.4vw,40px)/1.08 var(--fc);margin:12px 0 8px;text-wrap:balance;max-width:28ch}
+h2{font:700 21px/1.15 var(--fc);margin:4px 0 8px}
 .lede{color:var(--ink2);max-width:70ch;margin:0 0 20px}
 .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);margin:0}
+.mut{color:var(--ink2)}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* Componentes */
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
 .btn{background:var(--acc);color:#0F1219;font-weight:700;border:0;border-radius:10px;padding:10px 16px;min-height:44px}
 .btn:hover{background:#3fcdf6}.btn:active{background:var(--accp)}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.k{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{background:var(--hi)}
+.chip{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;font-size:14px;font-weight:600;color:var(--ink2)}
+.chip.on,.chip:hover{color:var(--ink);border-color:var(--acc)}
+.k{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;flex:none}
 .k.f{background:rgba(47,139,255,.16);color:#86b9ff}   /* Dato */
 .k.i{background:var(--mute);color:var(--ink2)}        /* Interpretación */
+.claim{display:flex;gap:8px;align-items:baseline;margin-top:8px;font-size:15px}
+.kpi .v{font:700 clamp(28px,3vw,38px)/1 var(--fc);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi p{margin:6px 0 0;font-size:14px;color:var(--ink2)}
+.bar{height:10px;background:var(--mute);border-radius:5px;overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:5px;width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.coach{background:var(--hi);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.coach p{margin:0 0 4px}
+
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand">GAME<b>WISE</b> LABS</div>
+  <div class="brand">GAME<b>WISE</b><span>Labs</span></div>
   <span style="flex:1"></span>
   <a class="back" href="../../index.html">← Volver a Labs</a>
 </header>
-<main>
-  <span class="note">⚠ Ejemplo · datos simulados</span>
-  <h1>El hallazgo o la idea, dicho en una frase</h1>
-  <p class="lede">Qué muestra esta demo y qué problema del jugador resuelve.</p>
 
-  <div class="card">
-    <p class="lbl">Sección</p>
-    <p>Acá va la demo.</p>
-    <p><span class="k f">Dato</span> Algo que sale de los datos. <span class="k i">Interpretación</span> Algo que deduce el coach.</p>
-    <button class="btn" id="accion">Acción principal</button>
-    <button class="btn ghost">Secundaria</button>
+<main>
+  <!-- Obligatorio: marca de datos de ejemplo -->
+  <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Ejemplo · datos simulados</span>
+
+  <!-- El título dice el hallazgo o la idea, no el tema -->
+  <h1>El momento clave de la demo, dicho en una frase</h1>
+  <p class="lede">Qué muestra esta demo y qué problema del jugador resuelve, en una o dos oraciones.</p>
+
+  <div class="grid">
+    <!-- Columna principal: el momento clave -->
+    <section class="card">
+      <p class="lbl">Sección principal</p>
+      <h2>Acá va el momento clave</h2>
+      <div class="row" role="group" aria-label="Opciones">
+        <button class="chip on">Opción A</button>
+        <button class="chip">Opción B</button>
+      </div>
+      <p class="lbl" style="margin-top:16px">Progreso de la meta</p>
+      <div class="bar" aria-hidden="true"><i id="barra" data-w="62"></i></div>
+      <p class="mut" style="margin:0;font-size:14px">62 de 70</p>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="accion">Acción principal</button>
+        <button class="btn ghost">Secundaria</button>
+      </div>
+    </section>
+
+    <!-- Columna lateral: el coach y las cifras -->
+    <aside style="display:grid;gap:16px">
+      <div class="card kpi">
+        <div class="v">+8</div>
+        <p>puntos en tu meta en las últimas 5 partidas</p>
+      </div>
+      <div class="card">
+        <p class="lbl">Coach</p>
+        <div class="coach" style="margin-top:10px">
+          <p id="respuesta">Vas mejorando, pero bajo presión volvés a acelerarte.</p>
+          <div class="claim"><span class="k f">Dato</span><span>Subiste de 54 a 62 en Toma de decisiones.</span></div>
+          <div class="claim"><span class="k i">Interpretación</span><span>La mejora es real; falta sostenerla cuando vas perdiendo.</span></div>
+        </div>
+      </div>
+    </aside>
   </div>
 </main>
+
 <script>
 {
-  // Código de la demo. Mantenelo todo en este archivo.
-  document.querySelector('#accion').addEventListener('click', () => {
-    document.querySelector('.lede').textContent = 'Funciona.';
+  // Todo el código de la demo va en este archivo, con los datos de ejemplo adentro.
+  const $ = s => document.querySelector(s);
+
+  // Animación de entrada de la barra (se apaga sola con "reducir movimiento").
+  requestAnimationFrame(() => { const b = $('#barra'); b.style.width = b.dataset.w / 70 * 100 + '%'; });
+
+  // Opciones seleccionables.
+  document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+  }));
+
+  $('#accion').addEventListener('click', () => {
+    $('#respuesta').textContent = 'Respuesta preparada del coach para esta acción.';
   });
 }
 </script>

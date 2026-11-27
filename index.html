@@ -43,6 +43,14 @@ h1{font:700 clamp(30px,4vw,46px)/1.05 var(--fc);margin:0 0 10px;text-wrap:balanc
 .btn:hover{background:#3fcdf6}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--acc)}
 .empty{color:var(--ink3);padding:30px 0}
+.need{border-top:1px solid var(--line);padding-top:10px}
+.need p{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin:0 0 6px}
+.need ul{margin:0;padding-left:18px;font-size:14px;color:var(--ink2)}
+.need b{color:var(--ink);font-family:var(--fc)}
+.howto{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 30px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+.howto h2{font:700 21px/1.15 var(--fc);margin:0 0 4px}.howto p{margin:0;color:var(--ink2);font-size:15px}
+.howto code{background:var(--hi);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:14px;color:var(--ink)}
+@media(max-width:700px){.howto{grid-template-columns:1fr}}
 footer{color:var(--ink3);font-size:13px;margin-top:40px}
 </style>
 </head>
@@ -54,9 +62,13 @@ footer{color:var(--ink3);font-size:13px;margin-top:40px}
   <div class="flow" aria-label="Recorrido de una idea">
     <b>Propuesta</b><i>→</i><b>En evaluación</b><i>→</i><b>Aprobada</b><i>→</i><b>En roadmap</b><i>o</i><b>Descartada</b>
   </div>
+  <div class="howto">
+    <div><h2>¿Tenés una idea? Armá la demo con IA</h2><p>Bajá el repo, abrilo con tu herramienta de IA y escribí <code>Quiero hacer una demo nueva</code>. Te va a hacer preguntas, la arma con la marca de GAMEWISE y deja escrito qué haría falta para hacerla real. No hace falta saber programar.</p></div>
+    <a class="btn" href="https://github.com/GameWiseDev/labs/blob/main/EMPEZAR.md">Ver cómo empezar</a>
+  </div>
   <div class="filters" id="filters" role="group" aria-label="Filtrar por estado"></div>
   <div class="grid" id="grid"></div>
-  <footer>Para sumar una demo, seguí los pasos del README del repo.</footer>
+  <footer>El esfuerzo es una estimación inicial a validar por el CTO. Las demos usan datos de ejemplo.</footer>
 </main>
 <script src="demos.js"></script>
 <script>
@@ -80,6 +92,7 @@ footer{color:var(--ink3);font-size:13px;margin-top:40px}
         <h2>${esc(d.nombre)}</h2>
         <p>${esc(d.resumen)}</p>
         ${d.incluye ? `<div class="tags">${d.incluye.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+        ${d.necesita ? `<div class="need"><p>Necesita${d.esfuerzo ? ` · esfuerzo <b>${esc(d.esfuerzo)}</b>` : ''}</p><ul>${d.necesita.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
         <div class="acts"><a class="btn" href="demos/${encodeURIComponent(d.slug)}/index.html">Abrir demo</a><a class="btn ghost" href="https://github.com/GameWiseDev/labs/blob/main/demos/${encodeURIComponent(d.slug)}/IDEA.md">Ficha</a></div>
       </article>`).join('') : '<p class="empty">No hay demos en este estado.</p>';
   }

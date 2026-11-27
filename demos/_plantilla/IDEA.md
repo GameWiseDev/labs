@@ -5,21 +5,57 @@
 - **Estado:** propuesta
 - **Demo:** [index.html](index.html)
 
+## En una frase
+
+¿Qué es la idea, contada como a un amigo?
+
 ## Problema del jugador
 
-¿Qué le pasa al jugador hoy que esta idea resuelve? Una o dos oraciones.
+¿Qué le pasa hoy al jugador que esta idea resuelve?
+
+## Para quién es la demo
+
+Equipo (¿se puede hacer?), inversores (visión) o jugadores (¿lo usarían?).
+
+## Momento clave
+
+Lo que alguien tiene que entender o sentir mirando la demo 30 segundos.
 
 ## Qué muestra la demo
 
-Qué se puede ver y tocar en la demo, en pocos puntos.
+El recorrido, paso a paso.
 
-## Qué haría falta para hacerlo real
+1.
+2.
+3.
 
-| Pieza | Qué se necesita | Dudas |
-| --- | --- | --- |
-|  |  |  |
+## Fuera de la demo
 
-## Riesgos y dudas
+Lo que quedó afuera a propósito o para más adelante.
+
+## Requerimientos
+
+**Esfuerzo estimado:** S / M / L / XL (estimación de la IA, a validar por el CTO)
+**Primera versión posible:**
+
+### Datos
+
+| Dato | Para qué | Fuente | ¿Lo tenemos? |
+| --- | --- | --- | --- |
+|  |  |  |  |
+
+### Librerías de la demo
+
+-
+
+### Para la versión real
+
+- **Backend:**
+- **IA:**
+- **Frontend:**
+- **Servicios externos:**
+
+### Riesgos y dudas
 
 -
 

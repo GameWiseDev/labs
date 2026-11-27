@@ -1,0 +1,6 @@
+---
+description: Instrucciones de GAMEWISE Labs para crear demos de ideas
+alwaysApply: true
+---
+
+Las instrucciones para la IA están en AGENTS.md, en la raíz del repo. Leelo completo y seguilo antes de hacer cualquier cosa: explica cómo guiar a la persona con preguntas (docs/proceso.md), las reglas de las demos (solo HTML, CSS y JS), la marca (docs/marca.md), el contexto del producto (docs/dominio.md) y el resumen de requerimientos (docs/requerimientos.md).
