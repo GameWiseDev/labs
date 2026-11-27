@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GAMEWISE Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#0F1219;--side:#141821;--card:#191D27;--hi:#20252F;--line:#262C38;--mute:#313847;--ink:#F1F3F7;--ink2:#A3ABBA;--ink3:#858EA0;--acc:#12BEF2;--accp:#0A8EC0;--green:#6FD36B;--red:#E5574F;--fb:Barlow,system-ui,sans-serif;--fc:'Barlow Semi Condensed',Barlow,system-ui,sans-serif}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--fb);overflow-x:clip}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{display:flex;align-items:center;gap:16px;padding:16px max(4vw,16px);border-bottom:1px solid var(--line);background:var(--side)}
+.brand{font:700 22px/1 var(--fc);letter-spacing:.05em}.brand b{color:var(--acc)}
+.brand span{color:var(--ink2);font-weight:600;margin-left:6px}
+main{padding:36px max(4vw,16px) 64px;max-width:1240px;margin:0 auto}
+h1{font:700 clamp(30px,4vw,46px)/1.05 var(--fc);margin:0 0 10px;text-wrap:balance;max-width:22ch}
+.lede{color:var(--ink2);max-width:66ch;margin:0 0 26px;font-size:17px}
+.flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 30px;font-size:14px;color:var(--ink2)}
+.flow b{color:var(--ink);background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:600}
+.flow i{font-style:normal;color:var(--ink3)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:14px;font-weight:600;color:var(--ink2)}
+.chip.on,.chip:hover{color:var(--ink);border-color:var(--acc)}
+.chip small{color:var(--ink3);margin-left:4px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.card h2{font:700 22px/1.15 var(--fc);margin:0}
+.card p{margin:0;color:var(--ink2);font-size:15px}
+.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink3)}
+.st{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--mute);color:var(--ink2);white-space:nowrap}
+.st.evaluacion{background:rgba(18,190,242,.12);color:var(--acc)}
+.st.aprobada,.st.roadmap{background:rgba(111,211,107,.13);color:var(--green)}
+.st.descartada{background:rgba(229,87,79,.12);color:var(--red)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{font-size:12px;color:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.acts{display:flex;gap:10px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+.btn{background:var(--acc);color:#0F1219;font-weight:700;border-radius:10px;padding:10px 16px;min-height:44px;text-decoration:none;display:inline-flex;align-items:center}
+.btn:hover{background:#3fcdf6}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{border-color:var(--acc)}
+.empty{color:var(--ink3);padding:30px 0}
+footer{color:var(--ink3);font-size:13px;margin-top:40px}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">GAME<b>WISE</b><span>Labs</span></div></header>
+<main>
+  <h1>Ideas que se pueden tocar antes de decidir si se construyen</h1>
+  <p class="lede">Cada demo muestra una idea funcionando con datos de ejemplo. El equipo las revisa en la reunión semanal: las elegidas pasan al roadmap o se adelantan a otros desarrollos.</p>
+  <div class="flow" aria-label="Recorrido de una idea">
+    <b>Propuesta</b><i>→</i><b>En evaluación</b><i>→</i><b>Aprobada</b><i>→</i><b>En roadmap</b><i>o</i><b>Descartada</b>
+  </div>
+  <div class="filters" id="filters" role="group" aria-label="Filtrar por estado"></div>
+  <div class="grid" id="grid"></div>
+  <footer>Para sumar una demo, seguí los pasos del README del repo.</footer>
+</main>
+<script src="demos.js"></script>
+<script>
+{
+  const ESTADOS = {propuesta:'Propuesta',evaluacion:'En evaluación',aprobada:'Aprobada',roadmap:'En roadmap',descartada:'Descartada'};
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fecha = f => { const [y,m,d] = String(f).split('-'); return d ? `${d}/${m}/${y}` : f; };
+  const demos = (window.DEMOS || []).slice().sort((a,b) => String(b.fecha).localeCompare(String(a.fecha)));
+  let filtro = 'todas';
+  try { filtro = localStorage.getItem('labs-filtro') || 'todas'; } catch (e) {}
+
+  function pintar() {
+    const cuenta = k => demos.filter(d => k === 'todas' || d.estado === k).length;
+    document.querySelector('#filters').innerHTML = ['todas', ...Object.keys(ESTADOS)]
+      .filter(k => k === 'todas' || cuenta(k))
+      .map(k => `<button class="chip ${k === filtro ? 'on' : ''}" data-f="${k}">${k === 'todas' ? 'Todas' : ESTADOS[k]}<small>${cuenta(k)}</small></button>`).join('');
+    const lista = demos.filter(d => filtro === 'todas' || d.estado === filtro);
+    document.querySelector('#grid').innerHTML = lista.length ? lista.map(d => `
+      <article class="card">
+        <div class="meta"><span class="st ${esc(d.estado)}">${esc(ESTADOS[d.estado] || d.estado)}</span><span>${esc(d.autor || '')} · ${esc(fecha(d.fecha))}</span></div>
+        <h2>${esc(d.nombre)}</h2>
+        <p>${esc(d.resumen)}</p>
+        ${d.incluye ? `<div class="tags">${d.incluye.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+        <div class="acts"><a class="btn" href="demos/${encodeURIComponent(d.slug)}/index.html">Abrir demo</a><a class="btn ghost" href="demos/${encodeURIComponent(d.slug)}/IDEA.md">Ficha</a></div>
+      </article>`).join('') : '<p class="empty">No hay demos en este estado.</p>';
+  }
+  document.querySelector('#filters').addEventListener('click', e => {
+    const b = e.target.closest('[data-f]'); if (!b) return;
+    filtro = b.dataset.f; try { localStorage.setItem('labs-filtro', filtro); } catch (err) {}
+    pintar();
+  });
+  if (filtro !== 'todas' && !demos.some(d => d.estado === filtro)) filtro = 'todas';
+  pintar();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GAMEWISE · Demo IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: coach táctico, directo, con evidencia; producto real de GAMEWISE, no landing
+   IDEA: la sala de revisión de un equipo pro: radar 2D, línea de tiempo y pizarra de decisiones
+   PICTURE: la ronda reconstruida en el mapa, con trayectorias, fantasma de la mejor decisión y curva de probabilidad
+   COLOUR and TYPE: sistema "Scoreboard táctico" del manual v1.1: carbón #0F1219, cian de acción, azul solo datos; Barlow + Barlow Semi Condensed
+   LAYOUT: menú lateral de la app, vista principal con mapa grande y panel del coach; se apila debajo de 1080px */
+:root{color-scheme:dark;--bg:#0F1219;--side:#141821;--card:#191D27;--hi:#20252F;--tip:#2A3142;--line:#262C38;--mute:#313847;--ink:#F1F3F7;--ink2:#A3ABBA;--ink3:#858EA0;--acc:#12BEF2;--accp:#0A8EC0;--blue:#2F8BFF;--green:#6FD36B;--red:#E5574F;--warn:#F2A93B;--t:#D9774A}
+:root[data-theme=light],:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.side{background:var(--side);border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:22px}
+.brand{flex:none;font:700 23px/1 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;letter-spacing:.05em;padding:0 10px}.brand b{color:var(--acc);font-weight:700}
+.brand small{display:block;font:600 11px Barlow,system-ui,sans-serif;letter-spacing:.12em;color:var(--ink3);margin-top:6px}
+nav{display:flex;flex-direction:column;gap:4px;flex:none}
+nav a{flex:none;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:9px;color:var(--ink2);text-decoration:none;min-height:44px;font-weight:600;white-space:nowrap}
+nav a:hover{background:var(--hi);color:var(--ink)}
+nav a.on{background:var(--hi);color:var(--ink);box-shadow:inset 3px 0 0 var(--acc)}
+nav svg{width:18px;height:18px;flex:none}
+.foot{margin-top:auto;font-size:13px;color:var(--ink3);padding:0 10px}
+main{padding:24px clamp(16px,3vw,36px) 56px;max-width:1360px;width:100%}
+.note{display:inline-flex;gap:8px;align-items:center;color:var(--warn);background:rgba(242,169,59,.09);border:1px solid rgba(242,169,59,.35);padding:5px 11px;border-radius:999px;font-size:13px;font-weight:600}
+.note svg{width:14px;height:14px}
+h1{font:700 clamp(27px,3.2vw,40px)/1.08 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:12px 0 8px;text-wrap:balance;max-width:28ch}
+h2{font:700 21px/1.15 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:0}
+h3{font:700 19px/1.2 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;margin:4px 0 6px}
+.lede{color:var(--ink2);max-width:72ch;margin:0 0 18px}
+.lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);margin:0}
+.mut{color:var(--ink2)}.small{font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sp{flex:1}
+.btn{background:var(--acc);color:#0F1219;font-weight:700;border:0;border-radius:10px;padding:10px 16px;min-height:44px}
+.btn:hover{background:#3fcdf6}.btn:active{background:var(--accp)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}.btn.ghost:hover{background:var(--hi)}
+.chip{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:40px;font-size:14px;font-weight:600;color:var(--ink2)}
+.chip.on,.chip:hover{color:var(--ink);border-color:var(--acc)}
+.chip:disabled{opacity:.5;cursor:default}
+.seg{display:inline-flex;background:var(--hi);border-radius:11px;padding:3px;flex-wrap:wrap}
+.seg button{background:none;border:0;color:var(--ink2);padding:8px 13px;border-radius:9px;min-height:40px;font-weight:600;font-size:14px}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.rgrid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:16px;align-items:start}
+.stackcol{display:grid;gap:16px}
+.mhead{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
+.clock{font:700 34px/1 'Barlow Semi Condensed',Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.clock small{font:600 12px Barlow,system-ui,sans-serif;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-right:6px;vertical-align:middle}
+.mapwrap{position:relative}
+.mapbox{position:relative;aspect-ratio:890/570;background:#0b0e14;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.mapbox>svg{position:absolute;inset:0;width:100%;height:100%}
+.pt{font:700 11px Barlow,system-ui,sans-serif;fill:#0F1219}
+.zl{font:600 18px Barlow,system-ui,sans-serif;fill:#6d7689}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--ink2);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.legend .ln{width:18px;height:0;border-radius:0;border-top:3px solid;vertical-align:3px}
+.ctrl{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.play{width:46px;height:46px;border-radius:50%;background:var(--acc);border:0;display:grid;place-items:center;flex:none}
+.play svg{width:18px;height:18px;fill:#0F1219}
+.tl{position:relative;flex:1 1 220px;height:44px;display:flex;align-items:center}
+.tl input{width:100%;accent-color:var(--acc);height:44px;margin:0;position:relative;z-index:1;background:transparent}
+.ticks{position:absolute;left:8px;right:8px;top:6px;height:8px;pointer-events:none}
+.ticks span{position:absolute;top:0;width:2px;height:8px;background:var(--ink3);border-radius:1px;transform:translateX(-1px)}
+.ticks span.d{background:var(--acc);width:4px;height:10px;top:-1px}
+.spd{min-width:56px;min-height:44px;border-radius:10px;background:var(--hi);border:1px solid var(--line);font-weight:700;font-variant-numeric:tabular-nums}
+.tog{display:inline-flex;gap:8px;align-items:center;font-size:14px;color:var(--ink2);min-height:44px;cursor:pointer}
+.tog input{width:18px;height:18px;accent-color:var(--acc)}
+.dec{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(470px,94%);max-height:96%;overflow:auto;background:rgba(25,29,39,.97);border:1px solid var(--acc);border-radius:14px;padding:16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.55);z-index:3}
+.opt{display:flex;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:10px;background:var(--hi);border:1px solid var(--line);min-height:44px;margin-top:8px;align-items:baseline}
+.opt:hover{border-color:var(--acc)}.opt b{color:var(--acc);font-family:'Barlow Semi Condensed',Barlow,sans-serif}
+.hint{font-size:13px;color:var(--ink3);margin:10px 0 0}
+.ev{padding:9px 0;border-top:1px solid var(--line)}
+.evh{display:flex;justify-content:space-between;gap:10px;font-size:15px}
+.evh .num{font:700 19px 'Barlow Semi Condensed',Barlow,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:8px;background:var(--mute);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:#5d6679;border-radius:4px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.ev.best .bar i{background:var(--acc)}.ev.best .num{color:var(--acc)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tg{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--mute);color:var(--ink2)}
+.tg.me{background:rgba(18,190,242,.14);color:var(--acc)}.tg.best{background:rgba(111,211,107,.14);color:var(--green)}
+.why{background:var(--hi);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink2);margin:10px 0}
+.toast{position:absolute;left:12px;top:12px;z-index:2;background:rgba(15,18,25,.92);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:14px;max-width:calc(100% - 24px);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toast b.w{color:var(--green)}.toast b.l{color:var(--red)}.toast b.o{color:var(--ink)}
+.toast button{background:var(--acc);color:#0F1219;border:0;border-radius:8px;padding:6px 10px;font-weight:700;font-size:13px;min-height:34px}
+.fig{position:relative;min-height:170px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.ax{font:500 12px Barlow,system-ui,sans-serif;fill:var(--ink3)}.ax.v{font-weight:700;fill:var(--ink)}
+.pnow{font:700 30px/1 'Barlow Semi Condensed',Barlow,sans-serif;font-variant-numeric:tabular-nums}
+.narr{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:2px;max-height:330px;overflow:auto}
+.narr li{display:grid;grid-template-columns:44px 1fr;gap:8px;padding:8px;border-radius:8px;color:var(--ink3);cursor:pointer;font-size:15px;line-height:1.4}
+.narr li time{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;padding-top:1px}
+.narr li.past{color:var(--ink2)}.narr li.now{background:var(--hi);color:var(--ink)}.narr li.now time{color:var(--acc)}
+.vbtn{background:var(--hi);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:38px;font-size:13px;font-weight:700;color:var(--ink2);display:inline-flex;gap:6px;align-items:center}
+.vbtn[aria-pressed=true]{color:var(--acc);border-color:var(--acc)}
+.vbtn svg{width:15px;height:15px}
+.msgs{display:flex;flex-direction:column;gap:10px;margin-top:10px;max-height:380px;overflow:auto}
+.msg{padding:10px 12px;border-radius:12px;font-size:15px;line-height:1.45;max-width:94%}
+.msg.u{align-self:flex-end;background:var(--tip)}
+.msg.c{background:var(--hi);border:1px solid var(--line)}
+.msg p{margin:0 0 6px}
+.claim{display:flex;gap:8px;align-items:baseline;margin-top:6px;font-size:14px}
+.k{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;flex:none;white-space:nowrap}
+.k.f{background:rgba(47,139,255,.16);color:#86b9ff}.k.i{background:var(--mute);color:var(--ink2)}
+.eid{display:inline-block;font-size:12px;font-weight:700;color:var(--acc);border:1px solid rgba(18,190,242,.4);border-radius:5px;padding:0 5px;margin-left:3px;white-space:nowrap}
+.tips{margin:8px 0 0;padding-left:18px;font-size:14px;color:var(--ink2)}
+.typing{color:var(--ink3);font-size:14px}
+.typing::after{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc);margin-left:8px;animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.2}}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi .v{font:700 clamp(28px,3vw,38px)/1 'Barlow Semi Condensed',Barlow,sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi p{margin:6px 0 0;font-size:14px;color:var(--ink2)}
+.mfig{min-height:280px}
+.detail{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.bgrid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+.zones{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:10px}
+.zones li{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:15px}
+.zones .n{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 13px 'Barlow Semi Condensed',Barlow,sans-serif;color:#0F1219}
+.rules{counter-reset:r;list-style:none;padding:0;margin:10px 0 0;display:grid;gap:10px}
+.rules li{counter-increment:r;display:grid;grid-template-columns:30px 1fr;gap:8px;font-size:15px}
+.rules li::before{content:counter(r);font:700 22px/1 'Barlow Semi Condensed',Barlow,sans-serif;color:var(--acc)}
+.goal{margin-top:6px}
+.gbar{position:relative;height:12px;background:var(--mute);border-radius:6px;margin:10px 0 6px}
+.gbar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--acc)}
+.gbar s{position:absolute;top:-3px;bottom:-3px;border:2px dashed var(--acc);border-left:0;border-radius:0 6px 6px 0;opacity:.6;text-decoration:none}
+.gl{display:flex;justify-content:space-between;font-size:13px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.hud{background:linear-gradient(180deg,rgba(18,190,242,.08),rgba(18,190,242,.02));border:1px dashed rgba(18,190,242,.45);border-radius:12px;padding:12px 14px;margin-top:16px}
+.hud .h{display:flex;gap:10px;align-items:center;font-size:15px}
+.hud .h b{font-family:'Barlow Semi Condensed',Barlow,sans-serif;color:var(--acc);white-space:nowrap}
+.tgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+.alert{border-color:rgba(242,169,59,.5)}
+.alert .lbl{color:var(--warn);display:flex;gap:6px;align-items:center}
+.cmp2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cmp2>div{background:var(--hi);border-radius:10px;padding:10px 12px}
+.cmp2 .v{font:700 32px/1 'Barlow Semi Condensed',Barlow,sans-serif;font-variant-numeric:tabular-nums}
+.cmp2 p{margin:4px 0 0;font-size:13px;color:var(--ink2)}
+.timer{font:700 54px/1 'Barlow Semi Condensed',Barlow,sans-serif;font-variant-numeric:tabular-nums;margin:8px 0}
+.steps{list-style:none;padding:0;margin:8px 0 12px;display:grid;gap:6px}
+.steps li{padding:8px 10px;border-radius:8px;font-size:15px;color:var(--ink3);background:var(--hi)}
+.steps li.on{color:var(--ink);box-shadow:inset 0 0 0 1px var(--acc)}
+.steps li.ok{color:var(--ink2)}
+.breath{width:70px;height:70px;border-radius:50%;border:2px solid var(--acc);margin:6px 0;opacity:.8}
+.running .breath{animation:br 8s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.7)}45%{transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){.running .breath,.typing::after{animation:none}.bar i{transition:none}}
+@media(max-width:1080px){.rgrid,.bgrid,.tgrid{grid-template-columns:1fr}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.side{height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:14px;z-index:5;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}nav{flex-direction:row}nav a.on{box-shadow:inset 0 -3px 0 var(--acc)}.foot,.brand small{display:none}.brand{padding:0 4px;font-size:20px}}
+.dec.flow{position:static;transform:none;width:auto;max-height:none;margin-top:12px;box-shadow:none}
+@media(max-width:700px){.dec{position:static;transform:none;width:auto;max-height:none;margin-top:12px}.kpis{grid-template-columns:1fr}.clock{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">GAME<b>WISE</b><small>DEMO · IA DEL COACH</small></div>
+    <nav>
+      <a href="#ronda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z" fill="currentColor"/></svg>Ronda clave</a>
+      <a href="#momentos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M7 12V6M11 12v4M15 12V8M19 12v7"/></svg>Momentos decisivos</a>
+      <a href="#briefing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v6c0 4-3.5 7-8 8-4.5-1-8-4-8-8V7z"/><path d="M9 12l2 2 4-4"/></svg>Briefing previo</a>
+      <a href="#tilt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Detector de tilt</a>
+    </nav>
+    <p class="foot"><a href="../../index.html" style="color:var(--acc);font-weight:700;text-decoration:none">← Volver a Labs</a><br>Demo conceptual de funciones de IA. Todas las partidas, jugadores y porcentajes son de ejemplo.</p>
+  </aside>
+
+  <main>
+    <!-- RONDA CLAVE -->
+    <section id="v-ronda">
+      <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Ejemplo · datos simulados</span>
+      <h1 id="rHead">Ronda clave</h1>
+      <p class="lede">El coach encuentra el segundo exacto en que la ronda se dio vuelta, te pide que decidas como si estuvieras ahí y simula 1.000 rondas desde esa posición para cada opción.</p>
+      <div class="row" style="margin-bottom:14px" id="scPick" role="group" aria-label="Elegir ronda"></div>
+      <div class="rgrid">
+        <div class="stackcol">
+          <div class="card">
+            <div class="mhead">
+              <div><p class="lbl" id="rMeta">Ronda</p><h2 id="rTitle">—</h2></div>
+              <div class="clock" aria-live="off"><small id="clkL">Ronda</small><span id="clock">1:15</span></div>
+            </div>
+            <div class="mapwrap">
+              <div class="mapbox">
+                <svg id="map" viewBox="95 35 890 570" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa táctico con la reconstrucción de la ronda"><g id="mapBase"></g><g id="dyn"></g></svg>
+                <div class="toast" id="toast" hidden></div>
+              </div>
+              <div class="dec" id="dec" hidden role="dialog" aria-modal="false" aria-label="Momento de decisión"></div>
+            </div>
+            <div class="ctrl">
+              <button class="play" id="playBtn" aria-label="Reproducir"><svg viewBox="0 0 24 24" id="playIco"><path d="M7 4l13 8-13 8z"/></svg></button>
+              <div class="tl"><div class="ticks" id="ticks"></div><input type="range" id="rng" min="0" max="34" step="0.05" value="0" aria-label="Línea de tiempo de la ronda"></div>
+              <button class="spd" id="spd" aria-label="Velocidad">1×</button>
+            </div>
+            <div class="ctrl">
+              <div class="seg" role="group" aria-label="Vista">
+                <button data-m="real" class="on">Lo que pasó</button>
+                <button data-m="sim">Mejor decisión (IA)</button>
+                <button data-m="cmp">Comparar</button>
+              </div>
+              <span class="sp"></span>
+              <label class="tog"><input type="checkbox" id="train" checked>Pausar en la decisión</label>
+            </div>
+            <div class="legend">
+              <span><i style="background:var(--t)"></i>T (tu equipo)</span>
+              <span><i style="background:var(--blue)"></i>CT</span>
+              <span><i class="ln" style="border-color:var(--red)"></i>Tu recorrido real</span>
+              <span><i class="ln" style="border-color:var(--acc)"></i>Recorrido simulado</span>
+              <span><i style="background:#A3ABBA;opacity:.6"></i>Humo</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row"><div><p class="lbl">Probabilidad de ganar la ronda</p><p class="small mut" style="margin:2px 0 0" id="probSub">Lo que pasó</p></div><span class="sp"></span><span class="pnow" id="probNow">—</span></div>
+            <div class="fig" style="margin-top:8px"><svg id="prob" aria-label="Curva de probabilidad de victoria"></svg></div>
+            <div class="legend" id="probLeg"></div>
+          </div>
+        </div>
+        <div class="stackcol">
+          <div class="card">
+            <div class="row"><p class="lbl">Relato del coach</p><span class="sp"></span>
+              <button class="vbtn" id="voice" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6"/></svg>Voz del coach</button></div>
+            <ol class="narr" id="narr"></ol>
+          </div>
+          <div class="card">
+            <p class="lbl">Preguntale al coach sobre esta ronda</p>
+            <div class="row" style="margin-top:10px" id="chips"></div>
+            <div class="msgs" id="msgs" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOMENTOS -->
+    <section id="v-momentos" hidden>
+      <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Ejemplo · datos simulados</span>
+      <h1>Perdiste 11–13, y dos decisiones tuyas daban vuelta el resultado</h1>
+      <p class="lede">La IA calcula, ronda por ronda, cuánto subió o bajó la probabilidad de ganar por lo que hiciste vos. Así aparecen los momentos que de verdad definieron la partida, no solo las bajas.</p>
+      <div class="kpis">
+        <div class="card kpi"><div class="v">−0,60</div><p>de probabilidad de victoria perdida en las rondas 14 y 19, tus dos peores decisiones</p></div>
+        <div class="card kpi"><div class="v">4 rondas</div><p>con peleas aisladas en esta partida: 8, 14, 19 y 21</p></div>
+        <div class="card kpi"><div class="v">7 de 10</div><p>de tus últimas partidas muestran el mismo patrón de pelear solo</p></div>
+      </div>
+      <div class="card">
+        <div class="row"><div><p class="lbl">Tu impacto por ronda</p><p class="small mut" style="margin:2px 0 0">Cambio en la probabilidad de ganar atribuido a tus acciones. Tocá una barra para ver el detalle.</p></div></div>
+        <div class="fig mfig" style="margin-top:10px"><svg id="mom" aria-label="Impacto por ronda"></svg></div>
+        <div class="legend"><span><i style="background:var(--green)"></i>Sumaste</span><span><i style="background:var(--red)"></i>Restaste</span><span><i style="background:none;border:2px solid var(--acc)"></i>Pelea aislada</span><span>▶ Ronda con simulación disponible</span></div>
+        <div class="detail" id="mDet"></div>
+      </div>
+    </section>
+
+    <!-- BRIEFING -->
+    <section id="v-briefing" hidden>
+      <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Ejemplo · datos simulados</span>
+      <h1>Antes de jugar: dónde vas a perder duelos hoy y cómo evitarlo</h1>
+      <p class="lede">Con tu historial, el coach predice tus zonas de riesgo en el próximo mapa y te da tres reglas concretas para tu meta. Lo podés escuchar mientras carga la partida.</p>
+      <div class="bgrid">
+        <div class="card">
+          <div class="row"><div><p class="lbl">Próxima partida · mismo esquema de mapa · lado T primero</p><h2 style="margin-top:4px">Tu mapa de riesgo</h2></div></div>
+          <div class="mapbox" style="margin-top:12px"><svg id="heat" viewBox="95 35 890 570" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Mapa de calor de riesgo"></svg></div>
+          <ul class="zones">
+            <li><span class="n" style="background:var(--red)">1</span><span><b>Mid sin compañero.</b> <span class="mut">Perdés 6 de cada 10 duelos cuando entrás sin nadie a menos de 2 s.</span></span></li>
+            <li><span class="n" style="background:var(--red)">2</span><span><b>Pasillo CT con la bomba plantada.</b> <span class="mut">Perdiste 3 de los últimos 4 duelos al salir a buscar la rotación.</span></span></li>
+            <li><span class="n" style="background:var(--green)">3</span><span><b>Apartamentos con el equipo.</b> <span class="mut">Ganás 62 % de los duelos cuando entrás segundo, detrás de una flash.</span></span></li>
+          </ul>
+        </div>
+        <div class="stackcol">
+          <div class="card">
+            <div class="row"><p class="lbl">3 reglas para hoy</p><span class="sp"></span><button class="vbtn" id="brVoice" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 010 6"/></svg>Escuchar briefing</button></div>
+            <ol class="rules">
+              <li>Antes de asomar a mid, contá hasta dos: si nadie te puede intercambiar, esperá.</li>
+              <li>Con la bomba plantada no salgas a buscar: armá fuego cruzado y dejá que corra el reloj.</li>
+              <li>Si perdés dos seguidas, tomá la pausa que te propone el detector de tilt.</li>
+            </ol>
+          </div>
+          <div class="card goal">
+            <p class="lbl">Tu meta · Toma de decisiones</p>
+            <div class="row" style="margin-top:6px;align-items:baseline"><span class="pnow">62</span><span class="mut small">de 54 al empezar el ciclo · meta 70</span></div>
+            <div class="gbar" aria-hidden="true"><i style="width:50%"></i><s style="left:50%;width:25%"></s></div>
+            <div class="gl"><span>54</span><span>Proyección: 66</span><span>70</span></div>
+            <div class="claim" style="margin-top:10px"><span class="k f">Dato</span><span>Subiste 8 puntos en las últimas 5 partidas.</span></div>
+            <div class="claim"><span class="k i">Interpretación</span><span>Si respetás la regla 1, proyectamos 66 en tres partidas.</span></div>
+          </div>
+          <div class="hud">
+            <p class="lbl" style="color:var(--acc)">Próximamente · coaching en vivo</p>
+            <div class="h" style="margin-top:8px"><b>R5 · 1:12</b><span>¿Quién te intercambia? Nico está a 4 s.</span></div>
+            <p class="small mut" style="margin:6px 0 0">Un recordatorio discreto en una segunda pantalla, solo cuando tu patrón está por repetirse.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TILT -->
+    <section id="v-tilt" hidden>
+      <span class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Ejemplo · datos simulados</span>
+      <h1>Después de dos derrotas, tu juego cambia: el coach lo detecta antes que vos</h1>
+      <p class="lede">La IA compara tu sesión de hoy con tus sesiones anteriores. Cuando ve el patrón de tilt, te avisa con datos y te propone una pausa con un objetivo concreto.</p>
+      <div class="tgrid">
+        <div class="card">
+          <p class="lbl">Sesión de hoy · 6 partidas</p>
+          <div class="fig" style="min-height:260px;margin-top:10px"><svg id="tiltC" aria-label="Peleas aisladas y rating por partida"></svg></div>
+          <div class="legend"><span><i style="background:var(--blue);border-radius:2px"></i>Peleas aisladas por partida</span><span><i class="ln" style="border-color:var(--ink)"></i>Rating</span><span><i style="background:rgba(242,169,59,.35);border-radius:2px"></i>Señal de tilt</span></div>
+        </div>
+        <div class="stackcol">
+          <div class="card alert">
+            <p class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg>Señal de tilt detectada</p>
+            <div class="claim" style="margin-top:10px"><span class="k f">Dato</span><span>Desde la partida 4, tus peleas aisladas pasaron de 1,8 a 4,1 por partida.</span></div>
+            <div class="claim"><span class="k f">Dato</span><span>Tu rating bajó de 1,08 a 0,74 en tres partidas.</span></div>
+            <div class="claim"><span class="k i">Interpretación</span><span>Después de perder, acelerás para recuperar rondas y peleás antes de que llegue el equipo.</span></div>
+            <div class="cmp2">
+              <div><div class="v" style="color:var(--red)">39 %</div><p>de ganar la próxima si seguís ahora</p></div>
+              <div><div class="v" style="color:var(--acc)">51 %</div><p>si jugás después de una pausa de 10 min</p></div>
+            </div>
+            <p class="small mut" style="margin:8px 0 0">Estimado con tus 40 sesiones anteriores en situaciones parecidas.</p>
+          </div>
+          <div class="card" id="pauseCard">
+            <p class="lbl">Pausa guiada</p>
+            <div class="row"><div class="timer" id="timer">10:00</div><span class="sp"></span><div class="breath" aria-hidden="true"></div></div>
+            <ol class="steps" id="steps">
+              <li>Levantate, tomá agua y alejate de la pantalla.</li>
+              <li>Respirá: inhalá 4 s, sostené 4 s y exhalá en 8 s.</li>
+              <li>5 min de deathmatch: solo duelos con el compañero detrás.</li>
+            </ol>
+            <div class="row"><button class="btn" id="pStart">Empezar pausa</button><button class="btn ghost" id="pSkip">Adelantar (demo)</button></div>
+            <p class="small" id="pMsg" style="margin:10px 0 0;color:var(--ink2)"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const C={T:'#D9774A',CT:'#2F8BFF',acc:'#12BEF2',red:'#E5574F',green:'#6FD36B',ink:'#F1F3F7',ink2:'#A3ABBA',ink3:'#858EA0',line:'#262C38',warn:'#F2A93B'};
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- MAPA (esquema propio, no es un mapa real) ---------- */
+const ZONES=[[830,250,140,190],[830,190,70,60],[640,120,260,70],[380,50,260,190],[390,240,80,50],[300,290,530,70],[110,200,190,220],[300,120,80,80],[160,420,90,80],[250,430,300,160],[550,465,350,85],[830,440,70,25]];
+const LABELS=[['Base T',842,272],['Rampa A',652,142],['Sitio A',394,76],['Conector',376,272,'end'],['Mid',768,307],['Ventana',306,382],['Base CT',122,224],['Sitio B',262,452],['Apartamentos',770,543]];
+function mapBase(){
+  return `<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#151a23" stroke-width="1"/></pattern>
+  <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#252b37"/></pattern></defs>
+  <rect width="1000" height="620" fill="url(#grid)"/>
+  ${ZONES.map(z=>`<rect x="${z[0]}" y="${z[1]}" width="${z[2]}" height="${z[3]}" rx="6" fill="#181d27" stroke="#2b3241" stroke-width="2"/>`).join('')}
+  ${ZONES.map(z=>`<rect x="${z[0]+2}" y="${z[1]+2}" width="${z[2]-4}" height="${z[3]-4}" rx="5" fill="url(#dots)"/>`).join('')}
+  ${LABELS.map(l=>`<text class="zl" x="${l[1]}" y="${l[2]}" text-anchor="${l[3]||'start'}">${l[0]}</text>`).join('')}`;
+}
+
+/* ---------- ESCENARIOS ---------- */
+const SC={
+ r14:{id:'r14',round:14,score:'6–7',side:'T',clockStart:75,clockLabel:'Ronda',D:10,dur:34,
+  title:'Peleaste solo en mid',
+  head:'Ronda 14: asomar solo bajó la probabilidad de ganar de 44 % a 24 %',
+  q:'Estás solo en mid y sin flash. Nico viene 2 s atrás con la suya. La ventana CT no está despejada.',
+  players:{
+   you:{team:'T',tag:'VOS',path:[[0,880,320],[3,800,325],[7,680,325],[10,600,325],[12.5,520,322]],death:[13,'c1']},
+   t2:{team:'T',tag:'NI',path:[[0,880,345],[4,820,335],[8,760,330],[10,740,330],[13,720,330],[16,850,430],[19,780,505],[22,660,505],[25,520,500],[27,470,515],[29,450,520]],death:[29,'c4']},
+   t3:{team:'T',tag:'T3',path:[[0,890,380],[4,860,450],[8,780,500],[22,700,505],[26,560,500],[27.5,520,520]],death:[27.5,'c2']},
+   t4:{team:'T',tag:'T4',path:[[0,900,340],[5,860,455],[9,800,510],[23,720,510],[27,560,510],[29,430,520],[31.5,380,500]],death:[31.5,'c5']},
+   t5:{team:'T',tag:'T5',path:[[0,905,300],[5,870,460],[10,820,500],[24,740,505],[28,600,505],[31,500,500],[33,450,505]],death:[33,'c1']},
+   c1:{team:'CT',tag:'C1',face:0,path:[[0,330,325],[18,330,325],[24,250,400],[30,300,460],[33,330,470]]},
+   c2:{team:'CT',tag:'C2',face:.2,path:[[0,330,470],[26,330,480],[30,360,510]],death:[30,'t4']},
+   c3:{team:'CT',tag:'C3',face:-.6,path:[[0,450,560],[27,460,560]],death:[27,'t2']},
+   c4:{team:'CT',tag:'C4',face:.6,path:[[0,470,90],[15,470,90],[18,340,160],[21,220,260],[24,200,420],[27,260,460],[29,300,480]]},
+   c5:{team:'CT',tag:'C5',face:.7,path:[[0,430,262],[15,430,262],[17,360,325],[20,240,350],[24,210,440],[28,280,470],[31.5,330,500]]}
+  },
+  events:[{t:23,type:'smoke',x:290,y:455},{t:25,type:'flash',x:420,y:500}],
+  prob:[[0,.47],[10,.45],[12.5,.44],[13,.24],[18,.21],[24,.26],[27,.31],[27.5,.22],[29,.14],[30,.24],[31.5,.07],[33,0]],
+  narr:[[0,'Ronda 14, 6–7. El plan es ejecutar B; vos y Nico arrancan por mid para dividir a la defensa.'],[4,'Nico se queda unos metros atrás para preparar la flash. Vos seguís adelante.'],[10,'Momento de decisión: estás solo en mid, sin flash y con la ventana CT sin despejar.']],
+  best:'B',
+  options:[{k:'A',label:'Seguir y asomar solo a ventana',mc:22,did:true},{k:'B',label:'Esperar 2 s a Nico y asomar con su flash',mc:64},{k:'C',label:'Volver y entrar a B con el equipo',mc:51}],
+  why:'Con la flash de Nico, el AWP no puede tirarte, y si caés hay alguien a un segundo para intercambiar. Asomando solo, tu muerte le sale gratis a CT y además le avisa que mid quedó vacío.',
+  branches:{
+   A:{base:true,end:33,result:'l',narr:[[12.5,'Asomás solo hacia ventana.'],[13,'El AWP te elimina. Sin nadie cerca para intercambiar, la muerte le sale gratis a CT.'],[15,'CT sabe que mid quedó vacío y rota dos jugadores hacia B.'],[27,'Ejecutan B 4 contra 5, con la rotación ya adentro.'],[33,'Ronda perdida. Tu equipo pasa de 45 % a 0 %.']]},
+   B:{end:28.5,result:'w',
+    players:{you:[[11,610,325],[12.5,560,322],[14,520,325],[16,460,300],[17.5,435,280],[19,360,325],[22,250,330],[24,215,390],[26.5,250,450],[28,285,470]],
+             t2:[[11,700,328],[11.5,690,328],[13,600,322],[16,480,318],[17.5,445,290],[20,425,250],[23,430,225]],
+             c5:[[17.5,430,262]]},
+    deaths:{c1:[13,'you'],c5:[17.5,'t2'],c4:[24,'you'],c3:[27,'t3'],c2:[28,'you']},
+    events:[{t:11.5,type:'flash',x:390,y:322},{t:23,type:'smoke',x:290,y:455},{t:25,type:'flash',x:420,y:500}],
+    prob:[[11.5,.5],[13,.68],[17.5,.79],[24,.88],[27,.93],[28,1]],
+    narr:[[11.5,'Esperás a Nico: tira la flash por encima de ventana.'],[13,'Asomás con el AWP encandilado. Eliminación y control de mid.'],[17.5,'Nico gana el duelo de conector. CT pierde dos jugadores sin saber dónde va la bomba.'],[24,'Rodeás por base CT y cortás la rotación.'],[28,'B queda limpio. Ronda ganada en la trayectoria más probable.']]},
+   C:{end:30,result:'o',
+    players:{you:[[11,640,325],[13,770,330],[16,850,445],[19,790,505],[24,690,505],[27,560,505],[28.5,500,505]],
+             t2:[[13,800,332],[16,860,450],[19,770,500],[24,680,500],[27,540,500],[28,490,515]],
+             c1:[[26,330,325],[30,280,420]],c4:[[30,470,92]],c5:[[27,430,262],[30,360,322]]},
+    deaths:{c3:[27,'t2'],t3:[27.5,'c2'],c2:[28.5,'t4']},
+    events:[{t:23,type:'smoke',x:290,y:455},{t:25,type:'flash',x:420,y:500}],
+    prob:[[13,.47],[19,.48],[24,.5],[27,.6],[27.5,.5],[28.5,.62],[30,.56]],
+    narr:[[13,'Volvés con el equipo: resignás mid, pero conservás un jugador.'],[19,'CT no tiene información y mantiene tres jugadores lejos de B.'],[27,'Ejecutan B con humo sobre la entrada CT.'],[30,'Bomba plantada y retake en camino: ronda abierta.']]}
+  },
+  qa:[
+   {q:'¿Por qué fue un error?',a:'Porque tomaste un duelo que no podías ganar ni aprovechar.',claims:[['F','Asomaste a ventana a 1:02, con Nico a 2 s y sin utilidad.',['R14']],['F','Al morir, la probabilidad de ganar bajó de 44 % a 24 %.',['R14']],['I','Aunque ganaras el duelo, nadie estaba cerca para usar el espacio que abrías.']]},
+   {q:'¿Me pasa seguido?',a:'Sí. Es tu patrón más repetido.',claims:[['F','Peleaste aislado en 4 rondas de esta partida.',['R8','R14','R19','R21']],['F','El patrón aparece en 7 de tus últimas 10 partidas.',[]],['I','Te pasa más cuando el marcador va en contra: acelerás para compensar.']]},
+   {q:'¿Qué entreno?',a:'Un hábito de dos segundos y una práctica corta.',claims:[['I','Antes de asomar, preguntate quién te intercambia si caés. Si nadie está a menos de 2 s, esperá.']],tips:['10 min de duelos en pareja en un mapa de práctica: entrás segundo, nunca primero.','En la próxima partida el coach cuenta solo cuántas veces esperaste el intercambio.']}
+  ]
+ },
+ r19:{id:'r19',round:19,score:'9–9',side:'T',clockStart:40,clockLabel:'Bomba',D:4,dur:25,
+  title:'Saliste a buscar la rotación',
+  head:'Ronda 19: salir a buscar la rotación regaló una ronda que ibas ganando',
+  q:'Bomba plantada en B. Escuchás pasos en el pasillo CT. Tomi cubre el sitio desde abajo y T4 está en apartamentos.',
+  bomb:[400,505],
+  players:{
+   you:{team:'T',tag:'VOS',path:[[0,300,520],[4,285,495],[6,235,455],[7.6,210,432]],death:[8,'c1']},
+   t2:{team:'T',tag:'TO',face:Math.PI,path:[[0,480,560],[14,478,556]],death:[14,'c4']},
+   t4:{team:'T',tag:'T4',path:[[0,610,505],[12,565,505],[15,525,500]],death:[18,'c5']},
+   c1:{team:'CT',tag:'C1',face:1.2,path:[[0,180,300],[5,198,380],[8,205,410],[12,250,455],[14,300,478]]},
+   c4:{team:'CT',tag:'C4',path:[[0,150,262],[6,188,392],[11,238,448],[14,318,480]],death:[15,'t4']},
+   c5:{team:'CT',tag:'C5',path:[[0,330,325],[6,240,340],[10,200,420],[15,280,470],[18,350,500],[20,392,503],[25,392,503]]}
+  },
+  events:[],
+  prob:[[0,.58],[4,.57],[6,.55],[8,.3],[14,.12],[15,.35],[18,.03],[25,0]],
+  narr:[[0,'Ronda 19, 9–9. Bomba plantada en B, 3 contra 3. El tiempo juega a tu favor: CT necesita 10 s para desactivar.'],[4,'Momento de decisión: escuchás pasos en el pasillo CT.']],
+  best:'B',
+  options:[{k:'A',label:'Salir a cortar la rotación por el pasillo CT',mc:18,did:true},{k:'B',label:'Volver al sitio y armar fuego cruzado con Tomi',mc:61},{k:'C',label:'Esconderte en apartamentos y esperar el desactivado',mc:34}],
+  why:'Con la bomba plantada, CT está obligado a entrar. En fuego cruzado tiene que mirar dos ángulos a la vez y cada segundo que pierde te acerca a la victoria. Saliendo a buscarlo, le das el duelo en su terreno.',
+  branches:{
+   A:{base:true,end:25,result:'l',narr:[[6,'Salís a buscar la rotación, solo.'],[8,'Te cruzás con dos CT a la vez: muerte sin intercambio.'],[14,'El retake entra 3 contra 2 y gana los duelos del sitio.'],[20,'El último CT empieza a desactivar.'],[25,'Desactivan con tiempo de sobra. Ronda perdida.']]},
+   B:{end:19.5,result:'w',players:{you:[[5.5,330,500],[7.5,430,470],[9,515,455]]},
+    deaths:{c1:[15,'you'],c4:[15.5,'t2'],t2:[18,'c5'],c5:[19.5,'you']},
+    prob:[[6,.58],[9,.63],[15,.8],[15.5,.92],[18,.79],[19.5,1]],
+    narr:[[7,'Volvés al sitio y armás fuego cruzado con Tomi.'],[15,'CT tiene que mirar dos ángulos a la vez: caen dos.'],[18,'Tomi cae, pero el último CT queda expuesto.'],[19.5,'Sin CT vivos: ronda ganada en la trayectoria más probable.']]},
+   C:{end:24,result:'o',players:{you:[[6,500,500],[9,620,505],[12,690,505],[20,660,505],[22,580,500],[24,500,500]]},
+    deaths:{t2:[14,'c4'],c4:[15,'t4'],t4:[18,'c5']},
+    prob:[[6,.55],[12,.5],[14,.36],[15,.48],[18,.3],[24,.32]],
+    narr:[[9,'Te escondés en apartamentos para sorprender el desactivado.'],[14,'Tus compañeros quedan en inferioridad en el sitio.'],[18,'Quedás solo contra dos.'],[24,'1 contra 2 con el desactivado en marcha: ronda abierta.']]}
+  },
+  qa:[
+   {q:'¿Por qué fue un error?',a:'Porque con la bomba plantada el que tiene que arriesgar es CT, no vos.',claims:[['F','Saliste del sitio con 0:36 de bomba y 3 contra 3.',['R19']],['F','Moriste contra dos CT a la vez en el pasillo y la probabilidad bajó de 55 % a 30 %.',['R19']],['I','Cambiaste una posición de ventaja por un duelo en su terreno.']]},
+   {q:'¿Me pasa seguido?',a:'En post-plant, bastante.',claims:[['F','Saliste a buscar la rotación en 3 de tus últimos 4 post-plant.',['R19']],['I','Es la misma raíz que en la ronda 14: pelear antes de que el equipo pueda ayudarte.']]},
+   {q:'¿Qué entreno?',a:'Posiciones de post-plant, no puntería.',claims:[['I','Con la bomba plantada, elegí una posición con un compañero cruzado y no te muevas hasta escuchar el desactivado.']],tips:['Repasá 2 posiciones de fuego cruzado por sitio en un servidor vacío.','Regla de la próxima partida: con bomba plantada, nunca salgas del sitio.']}
+  ]
+ }
+};
+
+/* ---------- MOTOR DE SIMULACIÓN ---------- */
+const cache={};
+function build(sc,k){
+  const key=sc.id+k; if(cache[key])return cache[key];
+  const b=sc.branches[k],D=sc.D,out={k,end:b.end,result:b.result,players:{},events:[]};
+  for(const id in sc.players){
+    const p=sc.players[id]; let path=p.path, death=p.death||null;
+    if(!b.base){
+      const ov=b.players&&b.players[id];
+      if(ov)path=p.path.filter(q=>q[0]<=D).concat(ov);
+      death=(b.deaths&&b.deaths[id])||(p.death&&p.death[0]<=D?p.death:null);
+    }
+    out.players[id]=Object.assign({},p,{id,path,death});
+  }
+  out.events=(b.base?sc.events:sc.events.filter(e=>e.t<=D).concat(b.events||[])).slice();
+  for(const id in out.players){const d=out.players[id].death;if(d)out.events.push({t:d[0],type:'kill',from:d[1],to:id})}
+  out.prob=b.base?sc.prob:sc.prob.filter(q=>q[0]<=D).concat(b.prob);
+  out.narr=sc.narr.concat(b.narr);
+  return cache[key]=out;
+}
+function at(p,t){
+  if(t<=p[0][0])return[p[0][1],p[0][2]];
+  for(let i=1;i<p.length;i++){if(t<=p[i][0]){const a=p[i-1],b=p[i],k=(t-a[0])/((b[0]-a[0])||1);return[a[1]+(b[1]-a[1])*k,a[2]+(b[2]-a[2])*k]}}
+  const l=p[p.length-1];return[l[1],l[2]];
+}
+const pos=(pl,t)=>at(pl.path,pl.death?Math.min(t,pl.death[0]):t);
+function dir(pl,t){
+  const p=pl.path,tt=pl.death?Math.min(t,pl.death[0]):t;
+  let i=p.findIndex(q=>q[0]>=tt); if(i<0)i=p.length-1;
+  for(let j=i;j>0;j--){const a=p[j-1],b=p[j];if(a[0]>tt)continue;const dx=b[1]-a[1],dy=b[2]-a[2];if(Math.hypot(dx,dy)>2)return Math.atan2(dy,dx)}
+  return pl.face??(pl.team==='T'?Math.PI:0);
+}
+function valAt(pr,t){
+  if(t<=pr[0][0])return pr[0][1];
+  for(let i=1;i<pr.length;i++){if(t<=pr[i][0]){const a=pr[i-1],b=pr[i];return a[1]+(b[1]-a[1])*(t-a[0])/((b[0]-a[0])||1)}}
+  return pr[pr.length-1][1];
+}
+const wedge=(x,y,a,r=82,s=.48)=>`M${x} ${y}L${x+r*Math.cos(a-s)} ${y+r*Math.sin(a-s)}A${r} ${r} 0 0 1 ${x+r*Math.cos(a+s)} ${y+r*Math.sin(a+s)}Z`;
+const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+
+/* ---------- ESTADO ---------- */
+const S={sc:SC.r14,br:'A',mode:'real',t:0,playing:false,speed:1,train:true,decided:false,voice:false,narrIdx:-1};
+const colOf=k=>k==='A'?C.red:k===S.sc.best?C.acc:C.ink2;
+
+function trail(pl,t,col,dash){
+  const lim=pl.death?Math.min(t,pl.death[0]):t;
+  const pts=pl.path.filter(q=>q[0]<=lim).map(q=>q[1]+','+q[2]); const c=pos(pl,t); pts.push(c[0]+','+c[1]);
+  if(pts.length<2)return '';
+  return `<polyline points="${pts.join(' ')}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" opacity=".75" ${dash?'stroke-dasharray="7 7"':''}/>`;
+}
+function render(){
+  const sc=S.sc,B=build(sc,S.br),t=S.t,o=[];
+  for(const e of B.events)if(e.type==='smoke'&&t>=e.t&&t<e.t+18){const k=Math.min(1,(t-e.t)/.6);o.push(`<circle cx="${e.x}" cy="${e.y}" r="${46*k}" fill="#A3ABBA" opacity=".3"/><circle cx="${e.x}" cy="${e.y}" r="${30*k}" fill="#A3ABBA" opacity=".2"/>`)}
+  if(sc.bomb){const[bx,by]=sc.bomb;o.push(`<rect x="${bx-10}" y="${by-10}" width="20" height="20" rx="4" fill="${C.red}"/><path d="M${bx} ${by-5}v6M${bx} ${by+4}v1" stroke="#0F1219" stroke-width="3" stroke-linecap="round"/>`)}
+  const cmp=S.mode==='cmp'&&S.br!=='A', A=cmp?build(sc,'A'):null;
+  if(cmp)o.push(trail(A.players.you,t,C.red,true));
+  o.push(trail(B.players.you,t,colOf(S.br),S.br==='A'&&false));
+  if(Math.abs(t-sc.D)<1.4){const[dx,dy]=pos(B.players.you,sc.D);o.push(`<circle cx="${dx}" cy="${dy}" r="${30+Math.sin(t*8)*3}" fill="none" stroke="${C.acc}" stroke-width="2" stroke-dasharray="5 5"/>`)}
+  const pls=Object.values(B.players);
+  for(const pl of pls){if(pl.death&&t>=pl.death[0])continue;const[x,y]=pos(pl,t),you=pl.id==='you';o.push(`<path d="${wedge(x,y,dir(pl,t),you?96:78)}" fill="${you?C.acc:C[pl.team]}" opacity="${you?.17:.08}"/>`)}
+  if(cmp){const g=A.players.you;const[x,y]=pos(g,t);const dead=g.death&&t>=g.death[0];
+    o.push(dead?`<path d="M${x-8} ${y-8}L${x+8} ${y+8}M${x+8} ${y-8}L${x-8} ${y+8}" stroke="${C.red}" stroke-width="3" opacity=".7"/>`:`<circle cx="${x}" cy="${y}" r="14" fill="none" stroke="${C.red}" stroke-width="2.5" stroke-dasharray="4 4" opacity=".9"/>`)}
+  for(const e of B.events)if(e.type==='kill'&&t>=e.t&&t<e.t+.9){const k=B.players[e.from],v=B.players[e.to];if(!k||!v)continue;const[x1,y1]=pos(k,e.t),[x2,y2]=pos(v,e.t);o.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="2.5" opacity="${(1-(t-e.t)/.9).toFixed(2)}"/>`)}
+  for(const e of B.events)if(e.type==='flash'&&t>=e.t&&t<e.t+.7){const k=(t-e.t)/.7;o.push(`<circle cx="${e.x}" cy="${e.y}" r="${12+60*k}" fill="#fff" opacity="${(.85*(1-k)).toFixed(2)}"/>`)}
+  for(const pl of pls){const[x,y]=pos(pl,t),c=C[pl.team],you=pl.id==='you';
+    if(pl.death&&t>=pl.death[0]){o.push(`<path d="M${x-8} ${y-8}L${x+8} ${y+8}M${x+8} ${y-8}L${x-8} ${y+8}" stroke="${c}" stroke-width="3.5" stroke-linecap="round" opacity=".55"/>`);continue}
+    o.push(`${you?`<circle cx="${x}" cy="${y}" r="21" fill="none" stroke="${colOf(S.br)}" stroke-width="3"/>`:''}<circle cx="${x}" cy="${y}" r="16" fill="${c}" stroke="#0F1219" stroke-width="2"/><text class="pt" x="${x}" y="${y+3.5}" text-anchor="middle">${pl.tag}</text>`)}
+  $('#dyn').innerHTML=o.join('');
+  $('#clock').textContent=fmt(sc.clockStart-t);
+  $('#rng').value=t;
+  drawProb(); updNarr();
+}
+
+/* ---------- PROBABILIDAD ---------- */
+function drawProb(){
+  const s=$('#prob'),W=s.clientWidth,H=s.clientHeight; if(!W)return;
+  const sc=S.sc,B=build(sc,S.br),A=build(sc,'A'),L=48,R=50,T=12,Bm=24,narrow=W<520;
+  const x=t=>L+(W-L-R)*t/sc.dur,y=p=>T+(H-T-Bm)*(1-p),pts=pr=>pr.map(q=>x(q[0]).toFixed(1)+','+y(q[1]).toFixed(1)).join(' ');
+  let h='';
+  for(const p of [0,.5,1])h+=`<line x1="${L}" x2="${W-R}" y1="${y(p)}" y2="${y(p)}" stroke="${C.line}"/><text class="ax" x="${L-8}" y="${y(p)+4}" text-anchor="end">${p*100} %</text>`;
+  h+=`<line x1="${x(sc.D)}" x2="${x(sc.D)}" y1="${T}" y2="${H-Bm}" stroke="${C.acc}" stroke-dasharray="3 4" opacity=".7"/><text class="ax" x="${x(sc.D)}" y="${H-6}" text-anchor="middle">${narrow?'Dec.':'Decisión'}</text>`;
+  if(S.br!=='A'){h+=`<polyline points="${pts(A.prob)}" fill="none" stroke="${C.red}" stroke-width="2" stroke-dasharray="5 5" opacity=".8"/>`;const la=A.prob[A.prob.length-1];h+=`<text class="ax" x="${x(la[0])+6}" y="${y(la[1])+4}">${Math.round(la[1]*100)} %</text>`}
+  const col=colOf(S.br);
+  h+=`<polyline points="${pts(B.prob)}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round"/>`;
+  const lb=B.prob[B.prob.length-1]; h+=`<text class="ax v" x="${x(lb[0])+6}" y="${y(lb[1])+(lb[1]>.95?12:4)}">${Math.round(lb[1]*100)} %</text>`;
+  const tt=Math.min(S.t,B.end),pv=valAt(B.prob,tt);
+  h+=`<line x1="${x(tt)}" x2="${x(tt)}" y1="${T}" y2="${H-Bm}" stroke="${C.ink3}"/><circle cx="${x(tt)}" cy="${y(pv)}" r="5.5" fill="${col}" stroke="#0F1219" stroke-width="2"/>`;
+  s.innerHTML=h; $('#probNow').textContent=Math.round(pv*100)+' %'; $('#probNow').style.color=col;
+}
+function probLegend(){
+  const nm={A:'Lo que pasó',B:'Opción B simulada',C:'Opción C simulada'};
+  $('#probSub').textContent=S.br==='A'?'Lo que pasó en tu partida':nm[S.br]+' · trayectoria más probable';
+  $('#probLeg').innerHTML=(S.br!=='A'?`<span><i class="ln" style="border-color:${C.red};border-top-style:dashed"></i>Lo que pasó</span>`:'')+`<span><i class="ln" style="border-color:${colOf(S.br)}"></i>${nm[S.br]}</span>`;
+}
+
+/* ---------- RELATO + VOZ ---------- */
+function say(txt){try{if(!S.voice||!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-AR';u.rate=1.06;speechSynthesis.speak(u)}catch(e){}}
+function renderNarr(){
+  const B=build(S.sc,S.br);
+  $('#narr').innerHTML=B.narr.map((n,i)=>`<li data-i="${i}" data-t="${n[0]}"><time>${fmt(S.sc.clockStart-n[0])}</time><span>${n[1]}</span></li>`).join('');
+  S.narrIdx=-1; updNarr(true);
+}
+function updNarr(force){
+  const B=build(S.sc,S.br);let idx=-1;B.narr.forEach((n,i)=>{if(S.t>=n[0]-.01)idx=i});
+  if(idx===S.narrIdx&&!force)return;
+  const prev=S.narrIdx;S.narrIdx=idx;
+  $$('#narr li').forEach((li,i)=>{li.className=i<idx?'past':i===idx?'now':''});
+  const cur=$('#narr li.now'); if(cur){const box=$('#narr');const top=cur.offsetTop-box.offsetTop;if(top<box.scrollTop||top>box.scrollTop+box.clientHeight-60)box.scrollTop=top-20}
+  if(S.playing&&idx>prev&&idx>=0)say(B.narr[idx][1]);
+}
+
+/* ---------- REPRODUCCIÓN ---------- */
+let last=0;
+function loop(ts){
+  if(!S.playing)return;
+  const dt=Math.min(.1,(ts-last)/1000);last=ts;
+  const prev=S.t,B=build(S.sc,S.br);S.t+=dt*S.speed;
+  if(S.train&&!S.decided&&prev<S.sc.D&&S.t>=S.sc.D){S.t=S.sc.D;render();pause();showDec();return}
+  if(S.t>=B.end){S.t=B.end;render();pause();showToast();return}
+  render();requestAnimationFrame(loop);
+}
+function play(){
+  if(!$('#dec').hidden)return;
+  const B=build(S.sc,S.br);if(S.t>=B.end-.02)S.t=0;
+  hideToast();S.playing=true;last=performance.now();syncPlay();requestAnimationFrame(loop);
+}
+function pause(){S.playing=false;syncPlay()}
+function syncPlay(){$('#playIco').innerHTML=S.playing?'<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>':'<path d="M7 4l13 8-13 8z"/>';$('#playBtn').setAttribute('aria-label',S.playing?'Pausar':'Reproducir')}
+function seek(t){const B=build(S.sc,S.br);S.t=Math.max(0,Math.min(t,B.end));hideToast();render()}
+function setBranch(k,mode){
+  S.br=k;S.mode=mode||(k==='A'?'real':'sim');if(k!=='A')S.decided=true;
+  $$('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));
+  const B=build(S.sc,S.br);if(S.t>B.end)S.t=B.end;
+  ticks();renderNarr();probLegend();render();
+}
+function ticks(){
+  const sc=S.sc,B=build(sc,S.br),pc=t=>(t/sc.dur*100).toFixed(2)+'%';
+  $('#ticks').innerHTML=B.events.filter(e=>e.type==='kill').map(e=>`<span style="left:${pc(e.t)}"></span>`).join('')+`<span class="d" style="left:${pc(sc.D)}" title="Decisión"></span>`;
+}
+
+/* ---------- DECISIÓN ---------- */
+function showDec(){
+  const sc=S.sc,d=$('#dec');d.hidden=false;d.classList.remove('flow');
+  d.innerHTML=`<p class="lbl" style="color:var(--acc)">Momento de decisión · ${fmt(sc.clockStart-sc.D)}</p><h3>¿Qué hacés?</h3><p class="mut small" style="margin:0">${sc.q}</p>${sc.options.map(o=>`<button class="opt" data-o="${o.k}"><b>${o.k}</b><span>${o.label}</span></button>`).join('')}<p class="hint">Elegí y el coach simula 1.000 rondas desde esta posición para cada opción.</p>`;
+  d.querySelector('.opt').focus({preventScroll:true});
+  say('Momento de decisión. '+sc.q+' ¿Qué hacés?');
+}
+function evaluate(k){
+  const sc=S.sc,best=sc.best,d=$('#dec'),ok=k===best;d.classList.add('flow');
+  d.innerHTML=`<p class="lbl" style="color:var(--acc)">Simulación · 1.000 rondas por opción</p><h3>${ok?'Bien leído: elegiste la mejor opción.':'La mejor opción era la '+best+'.'}</h3>
+  ${sc.options.map(o=>`<div class="ev ${o.k===best?'best':''}"><div class="evh"><span><b>${o.k}</b> · ${o.label}</span><span class="num" data-n="${o.mc}">0</span></div><div class="bar"><i data-w="${o.mc}"></i></div><div class="tags">${o.did?'<span class="tg">Lo que hiciste</span>':''}${o.k===k?'<span class="tg me">Tu elección</span>':''}${o.k===best?'<span class="tg best">✓ Mejor opción</span>':''}</div></div>`).join('')}
+  <p class="hint" style="margin-top:6px">Rondas ganadas de cada 100 simuladas desde este momento.</p>
+  <div class="why"><b style="color:var(--ink)">Por qué:</b> ${sc.why}</div>
+  <div class="row"><button class="btn" data-go="${best}">Ver la mejor decisión</button>${k!==best&&k!=='A'?`<button class="btn ghost" data-go="${k}">Ver tu elección</button>`:''}<button class="btn ghost" data-go="A">Ver lo que pasó</button></div>`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    d.querySelectorAll('.bar i').forEach(i=>i.style.width=i.dataset.w+'%');
+    const t0=performance.now();
+    const tick=now=>{const k2=RM?1:Math.min(1,(now-t0)/900);d.querySelectorAll('.num').forEach(n=>n.textContent=Math.round(n.dataset.n*k2)+' de 100');if(k2<1)requestAnimationFrame(tick)};requestAnimationFrame(tick);
+  }));
+  d.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+  say(ok?'Bien leído. '+sc.why:'La mejor opción era la '+best+'. '+sc.why);
+}
+function hideDec(){$('#dec').hidden=true}
+$('#dec').addEventListener('click',e=>{
+  const o=e.target.closest('[data-o]');if(o){evaluate(o.dataset.o);return}
+  const g=e.target.closest('[data-go]');if(g){S.decided=true;hideDec();setBranch(g.dataset.go,g.dataset.go==='A'?'real':'sim');play()}
+});
+
+/* ---------- RESULTADO ---------- */
+function showToast(){
+  const sc=S.sc,B=build(sc,S.br),opt=sc.options.find(o=>o.k===S.br),tx={l:['l','✕ Ronda perdida'],w:['w','✓ Ronda ganada'],o:['o','◐ Ronda abierta']}[B.result];
+  $('#toast').innerHTML=`<b class="${tx[0]}">${tx[1]}</b><span class="mut">${S.br==='A'?'Así terminó en tu partida.':'Gana '+opt.mc+' de cada 100 simulaciones.'}</span>${S.br==='A'?`<button data-go="${sc.best}">Simular la mejor decisión</button>`:''}`;
+  $('#toast').hidden=false;
+}
+function hideToast(){$('#toast').hidden=true}
+$('#toast').addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){S.t=Math.max(0,S.sc.D-1.5);setBranch(g.dataset.go,'sim');play()}});
+
+/* ---------- CHAT DEL COACH ---------- */
+let busy=false;const wait=ms=>new Promise(r=>setTimeout(r,RM?0:ms));
+function renderChips(){$('#chips').innerHTML=S.sc.qa.map((x,i)=>`<button class="chip" data-q="${i}">${x.q}</button>`).join('')}
+async function ask(i){
+  if(busy)return;busy=true;$$('#chips .chip').forEach(c=>c.disabled=true);
+  const x=S.sc.qa[i],box=$('#msgs');box.insertAdjacentHTML('beforeend',`<div class="msg u">${x.q}</div>`);
+  const m=document.createElement('div');m.className='msg c';m.innerHTML='<span class="typing">Revisando tus rondas</span>';box.append(m);box.scrollTop=box.scrollHeight;
+  await wait(700);m.innerHTML='<p></p>';const p=m.firstChild;
+  for(let j=1;j<=x.a.length;j++){p.textContent=x.a.slice(0,j);if(j%2===0)await wait(14)}
+  for(const c of x.claims){await wait(240);const el=document.createElement('div');el.className='claim';el.innerHTML=`<span class="k ${c[0]==='F'?'f':'i'}">${c[0]==='F'?'Dato':'Interpretación'}</span><span>${c[1]}${(c[2]||[]).map(e=>` <span class="eid">${e}</span>`).join('')}</span>`;m.append(el);box.scrollTop=box.scrollHeight}
+  if(x.tips){await wait(240);m.insertAdjacentHTML('beforeend',`<ul class="tips">${x.tips.map(t=>`<li>${t}</li>`).join('')}</ul>`)}
+  box.scrollTop=box.scrollHeight;busy=false;$$('#chips .chip').forEach(c=>c.disabled=false);
+}
+$('#chips').addEventListener('click',e=>{const c=e.target.closest('[data-q]');if(c)ask(+c.dataset.q)});
+
+/* ---------- CARGA DE ESCENARIO ---------- */
+function load(id){
+  pause();hideDec();hideToast();S.sc=SC[id];S.t=0;S.decided=false;
+  $('#scPick').innerHTML=Object.values(SC).map(s=>`<button class="chip ${s.id===id?'on':''}" data-sc="${s.id}">Ronda ${s.round} · ${s.title}</button>`).join('');
+  $('#rHead').textContent=S.sc.head;$('#rTitle').textContent=S.sc.title;$('#rMeta').textContent=`Ronda ${S.sc.round} · ${S.sc.score} · Lado ${S.sc.side}`;
+  $('#clkL').textContent=S.sc.clockLabel;$('#rng').max=S.sc.dur;
+  $('#msgs').innerHTML='';renderChips();setBranch('A','real');
+}
+$('#scPick').addEventListener('click',e=>{const c=e.target.closest('[data-sc]');if(c)load(c.dataset.sc)});
+$('#playBtn').addEventListener('click',()=>S.playing?pause():play());
+$('#rng').addEventListener('input',e=>{pause();hideDec();seek(+e.target.value)});
+$('#spd').addEventListener('click',e=>{const v=[.5,1,2],i=(v.indexOf(S.speed)+1)%3;S.speed=v[i];e.target.textContent=String(v[i]).replace('.',',')+'×'});
+$('#train').addEventListener('change',e=>{S.train=e.target.checked});
+$$('.seg button').forEach(b=>b.addEventListener('click',()=>{hideDec();hideToast();const m=b.dataset.m;if(m==='real'){setBranch('A','real')}else{setBranch(S.sc.best,m)}}));
+$('#narr').addEventListener('click',e=>{const li=e.target.closest('li');if(li){pause();hideDec();seek(+li.dataset.t)}});
+$('#voice').addEventListener('click',e=>{S.voice=!S.voice;e.currentTarget.setAttribute('aria-pressed',S.voice);if(S.voice){say('Voz del coach activada.')}else{try{speechSynthesis.cancel()}catch(err){}}});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body&&!$('#v-ronda').hidden){e.preventDefault();S.playing?pause():play()}});
+
+/* ---------- MOMENTOS DECISIVOS ---------- */
+const ROUNDS=[[1,1,.08,'Abriste el sitio A detrás de la flash de Nico.'],[2,0,-.05,'Ronda económica perdida sin daño tuyo relevante.'],[3,1,.12,'Doble baja en la defensa de B con intercambio.'],[4,1,.03,'Rol de apoyo: humo y flash a tiempo.'],[5,0,-.08,'Rotaste tarde a B.'],[6,0,-.02,'Ronda forzada sin impacto.'],[7,1,.10,'Ganaste el duelo de apertura en mid acompañado.'],[8,0,-.15,'Pelea aislada en conector sin cobertura.',0,1],[9,1,.04,'Sostuviste el sitio hasta el retake.'],[10,0,-.06,'Moriste primero en el retake.'],[11,1,.18,'Clutch 1 contra 2 jugando el tiempo.'],[12,0,-.03,'Ronda económica.'],[13,0,-.09,'Te quedaste sin utilidad al ejecutar.'],[14,0,-.21,'Asomaste solo a ventana sin la flash de Nico.','r14',1],[15,1,.06,'Intercambio rápido en apartamentos.'],[16,1,.04,'Plantaste y cubriste desde el sitio.'],[17,1,.09,'Entrada en B detrás del humo.'],[18,0,-.07,'Perdiste el duelo de rampa.'],[19,0,-.39,'Saliste a buscar la rotación con la bomba plantada.','r19',1],[20,1,.05,'Apoyo con flashes en la ejecución.'],[21,0,-.11,'Pelea aislada en mid con el marcador en contra.',0,1],[22,1,.07,'Ganaste el post-plant en fuego cruzado.'],[23,0,-.05,'Ronda económica.'],[24,0,-.08,'Ejecución lenta; moriste en la entrada.']];
+let selR=14;
+function drawMoments(){
+  const s=$('#mom'),W=s.clientWidth,H=s.clientHeight;if(!W)return;
+  const L=36,R=10,T=26,Bm=26,n=ROUNDS.length,sw=(W-L-R)/n,lo=-.42,hi=.22,y=v=>T+(H-T-Bm)*(hi-v)/(hi-lo),z=y(0),narrow=W<560;
+  let h='';
+  for(const v of [.2,0,-.2,-.4])h+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${v===0?'#3a4252':C.line}"/><text class="ax" x="${L-6}" y="${y(v)+4}" text-anchor="end">${v>0?'+':''}${String(v).replace('.',',')}</text>`;
+  ROUNDS.forEach((r,i)=>{
+    const x=L+i*sw,bw=Math.max(4,sw*.62),bx=x+(sw-bw)/2,top=Math.min(y(r[2]),z),bh=Math.abs(y(r[2])-z);
+    const sel=r[0]===selR;
+    h+=`<g data-r="${r[0]}" style="cursor:pointer"><rect x="${x}" y="${T-20}" width="${sw}" height="${H-T-Bm+40}" fill="${sel?'rgba(255,255,255,.04)':'transparent'}"/>`;
+    h+=`<rect x="${bx}" y="${top}" width="${bw}" height="${Math.max(2,bh)}" rx="2" fill="${r[2]>=0?C.green:C.red}" opacity="${sel?1:.85}"/>`;
+    if(r[5])h+=`<rect x="${bx-3}" y="${top-3}" width="${bw+6}" height="${Math.max(2,bh)+6}" rx="3" fill="none" stroke="${C.acc}" stroke-width="2"/>`;
+    if(r[4])h+=`<text class="ax" x="${x+sw/2}" y="${y(r[2])+16}" text-anchor="middle" style="fill:${C.acc};font-weight:700">▶</text>`;
+    if(!narrow||r[0]%3===0||r[4])h+=`<text class="ax ${sel?'v':''}" x="${x+sw/2}" y="${H-8}" text-anchor="middle">${r[0]}</text>`;
+    h+='</g>';
+  });
+  h+=`<text class="ax" x="${L}" y="12">Rondas 1–24</text>`;
+  s.innerHTML=h;
+}
+function momDetail(){
+  const r=ROUNDS.find(q=>q[0]===selR),v=(r[2]>0?'+':'−')+Math.abs(r[2]).toFixed(2).replace('.',',');
+  $('#mDet').innerHTML=`<div><p class="lbl">Ronda ${r[0]} · ${r[1]?'Ganada':'Perdida'}${r[5]?' · Pelea aislada':''}</p><h3>${r[3]}</h3><p class="mut small" style="margin:0">Tu impacto en la probabilidad de victoria: <b style="color:${r[2]>=0?C.green:C.red}">${v}</b></p></div>${r[4]?`<button class="btn" data-open="${r[4]}">Ver la ronda y simular</button>`:'<span class="small mut">Simulación disponible para las rondas 14 y 19 en esta demo.</span>'}`;
+}
+$('#mom').addEventListener('click',e=>{const g=e.target.closest('[data-r]');if(g){selR=+g.dataset.r;drawMoments();momDetail()}});
+$('#mDet').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(b){load(b.dataset.open);location.hash='ronda'}});
+
+/* ---------- BRIEFING ---------- */
+function drawHeat(){
+  const blobs=[[560,325,95,C.red,1],[210,445,75,C.red,2],[690,505,85,C.green,3]];
+  $('#heat').innerHTML=mapBase()+`<defs>${blobs.map((b,i)=>`<radialGradient id="hg${i}"><stop offset="0" stop-color="${b[3]}" stop-opacity=".75"/><stop offset=".6" stop-color="${b[3]}" stop-opacity=".25"/><stop offset="1" stop-color="${b[3]}" stop-opacity="0"/></radialGradient>`).join('')}</defs>`+
+  blobs.map((b,i)=>`<circle cx="${b[0]}" cy="${b[1]}" r="${b[2]}" fill="url(#hg${i})"/>`).join('')+
+  blobs.map(b=>`<circle cx="${b[0]}" cy="${b[1]}" r="17" fill="${b[3]}" stroke="#0F1219" stroke-width="3"/><text x="${b[0]}" y="${b[1]+6}" text-anchor="middle" style="font:700 17px \'Barlow Semi Condensed\',Barlow,sans-serif;fill:#0F1219">${b[4]}</text>`).join('');
+}
+const BRIEF='Briefing de tu próxima partida. Tu meta es toma de decisiones: vas en 62, subiste 8 puntos. Zona de riesgo uno: mid sin compañero, perdés 6 de cada 10 duelos. Zona dos: el pasillo CT con la bomba plantada. Tu zona fuerte: apartamentos, entrando segundo detrás de una flash. Regla uno: antes de asomar a mid, contá hasta dos. Si nadie te puede intercambiar, esperá. Regla dos: con la bomba plantada, armá fuego cruzado y dejá correr el reloj. Regla tres: si perdés dos seguidas, tomá la pausa. Suerte.';
+$('#brVoice').addEventListener('click',e=>{
+  const b=e.currentTarget,on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);
+  try{speechSynthesis.cancel();if(on){const u=new SpeechSynthesisUtterance(BRIEF);u.lang='es-AR';u.rate=1.04;u.onend=()=>b.setAttribute('aria-pressed','false');speechSynthesis.speak(u)}}catch(err){b.setAttribute('aria-pressed','false')}
+});
+
+/* ---------- TILT ---------- */
+const SES=[[1,1,1.5,1.12],[2,1,2.0,1.05],[3,0,2.0,1.08],[4,0,3.6,.81],[5,0,4.1,.74],[6,0,4.6,.69]];
+function drawTilt(){
+  const s=$('#tiltC'),W=s.clientWidth,H=s.clientHeight;if(!W)return;
+  const L=36,R=44,T=16,Bm=46,n=SES.length,sw=(W-L-R)/n,yb=v=>T+(H-T-Bm)*(1-v/5),yr=v=>T+(H-T-Bm)*(1-(v-.5)/.75);
+  let h=`<rect x="${L+3*sw}" y="${T-6}" width="${3*sw}" height="${H-T-Bm+6}" fill="rgba(242,169,59,.12)"/><text class="ax" x="${L+3*sw+8}" y="${T+8}" fill="${C.warn}" style="fill:${C.warn};font-weight:700">Señal de tilt</text>`;
+  for(const v of [0,2,4])h+=`<line x1="${L}" x2="${W-R}" y1="${yb(v)}" y2="${yb(v)}" stroke="${C.line}"/><text class="ax" x="${L-6}" y="${yb(v)+4}" text-anchor="end">${v}</text>`;
+  for(const v of [.75,1,1.25])h+=`<text class="ax" x="${W-R+6}" y="${yr(v)+4}">${String(v).replace('.',',')}</text>`;
+  SES.forEach((m,i)=>{const x=L+i*sw,bw=sw*.42;h+=`<rect x="${x+(sw-bw)/2}" y="${yb(m[2])}" width="${bw}" height="${yb(0)-yb(m[2])}" rx="3" fill="${C.CT}" opacity=".85"/>`;
+    h+=`<text class="ax" x="${x+sw/2}" y="${H-24}" text-anchor="middle">P${m[0]}</text><text class="ax v" x="${x+sw/2}" y="${H-6}" text-anchor="middle" style="fill:${m[1]?C.green:C.red}">${m[1]?'G':'P'}</text>`});
+  const pts=SES.map((m,i)=>`${L+i*sw+sw/2},${yr(m[3])}`).join(' ');
+  h+=`<polyline points="${pts}" fill="none" stroke="${C.ink}" stroke-width="2.5"/>`+SES.map((m,i)=>`<circle cx="${L+i*sw+sw/2}" cy="${yr(m[3])}" r="4.5" fill="${C.ink}" stroke="#0F1219" stroke-width="2"/>`).join('');
+  s.innerHTML=h;
+}
+let rem=600,tmr=null;
+function paintTimer(){
+  $('#timer').textContent=fmt(rem);
+  const st=rem>480?0:rem>300?1:2;$$('#steps li').forEach((li,i)=>li.className=rem===0?'ok':i<st?'ok':i===st&&tmr?'on':'');
+  if(rem===0){clearInterval(tmr);tmr=null;$('#pauseCard').classList.remove('running');$('#pStart').textContent='Repetir pausa';$('#pMsg').innerHTML='<b style="color:var(--acc)">Listo.</b> Volvés con 51 % estimado de ganar la próxima, contra 39 % antes de la pausa.'}
+}
+$('#pStart').addEventListener('click',()=>{if(tmr)return;if(rem===0)rem=600;$('#pMsg').textContent='';$('#pauseCard').classList.add('running');tmr=setInterval(()=>{rem=Math.max(0,rem-1);paintTimer()},1000);paintTimer()});
+$('#pSkip').addEventListener('click',()=>{if(rem>300&&tmr){rem=300}else{rem=0}if(!tmr&&rem!==0){$('#pStart').click()}paintTimer()});
+
+/* ---------- RUTEO ---------- */
+const VIEWS=['ronda','momentos','briefing','tilt'];
+function route(){
+  let h=location.hash.slice(1);if(!VIEWS.includes(h))h='ronda';
+  VIEWS.forEach(v=>$('#v-'+v).hidden=v!==h);
+  $$('nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h));
+  if(h!=='ronda')pause();
+  requestAnimationFrame(()=>{drawProb();drawMoments();drawTilt()});
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+const ro=new ResizeObserver(()=>{drawProb();drawMoments();drawTilt()});
+['#prob','#mom','#tiltC'].forEach(q=>ro.observe($(q)));
+
+$('#mapBase').innerHTML=mapBase();drawHeat();momDetail();paintTimer();
+load('r14');route();
+}
+</script>
+</body>
+</html>
