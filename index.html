@@ -80,7 +80,7 @@ footer{color:var(--ink3);font-size:13px;margin-top:40px}
         <h2>${esc(d.nombre)}</h2>
         <p>${esc(d.resumen)}</p>
         ${d.incluye ? `<div class="tags">${d.incluye.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
-        <div class="acts"><a class="btn" href="demos/${encodeURIComponent(d.slug)}/index.html">Abrir demo</a><a class="btn ghost" href="demos/${encodeURIComponent(d.slug)}/IDEA.md">Ficha</a></div>
+        <div class="acts"><a class="btn" href="demos/${encodeURIComponent(d.slug)}/index.html">Abrir demo</a><a class="btn ghost" href="https://github.com/GameWiseDev/labs/blob/main/demos/${encodeURIComponent(d.slug)}/IDEA.md">Ficha</a></div>
       </article>`).join('') : '<p class="empty">No hay demos en este estado.</p>';
   }
   document.querySelector('#filters').addEventListener('click', e => {
